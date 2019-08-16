@@ -22,6 +22,8 @@ dependencies:
   #firebase_auth:
   #firebase_core: ^0.4.0
   #firebase_messaging:
+  date_utils:
+  flutter_calendar_carousel:  ^1.3.18
   splashscreen:
   http: ^0.12.0+2
   shared_preferences: ^0.5.1+2

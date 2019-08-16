@@ -1,4 +1,5 @@
 import 'package:doble_control/Actividades/LogIn.dart';
+import 'package:doble_control/Actividades/Principal.dart';
 import 'package:doble_control/Actividades/SingIn.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Doble Control',
       debugShowCheckedModeBanner: false,  
       routes: <String, WidgetBuilder>{
-        '/principal': (BuildContext context) => new SignIn(),
+        '/principal': (BuildContext context) => new Principal(),
         '/logIn': (BuildContext context) => new LogIn(),
       },
       home: Scaffold(

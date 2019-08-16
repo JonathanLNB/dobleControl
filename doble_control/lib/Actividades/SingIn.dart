@@ -13,7 +13,7 @@ class _SignIn extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new ClienteAdapter();
+    return Stack();
   }
 
 }

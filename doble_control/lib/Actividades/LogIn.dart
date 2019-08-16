@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:doble_control/Actividades/Principal.dart';
 import 'package:doble_control/Actividades/SingIn.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
@@ -29,6 +30,14 @@ class _LogIn extends State<LogIn> {
     // TODO: implement build
     return Scaffold(
       body: Stack(children: <Widget>[
+        Container(
+          decoration: new BoxDecoration(
+            image: new DecorationImage(
+                image: new AssetImage("assets/images/fondo.png"),
+                fit: BoxFit.none,
+                repeat: ImageRepeat.repeat),
+          ),
+        ),
         NavigationBar(true),
         Container(
           alignment: Alignment.topCenter,
@@ -37,7 +46,7 @@ class _LogIn extends State<LogIn> {
                 ? EdgeInsets.only(top: 120)
                 : EdgeInsets.only(top: 120),
             child: Text(
-              "! Bienvenido ¡",
+              Strings.bienvenido,
               style: TextStyle(
                   color: AppColors.colorAccent,
                   fontSize: 30.0,
@@ -103,11 +112,11 @@ class _LogIn extends State<LogIn> {
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SignIn()),
+                                          builder: (context) => Principal()),
                                       ModalRoute.withName('/principal'));
                                 },
                                 child: Text(
-                                  "Ingresar",
+                                  Strings.ingresar,
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontFamily: "GoogleSans",

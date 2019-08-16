@@ -1,46 +1,185 @@
+import 'package:doble_control/Herramientas/Strings.dart';
+import 'package:doble_control/Herramientas/appColors.dart';
+import 'package:doble_control/TDA/Clase.dart';
 import 'package:flutter/material.dart';
 
 class ClienteAdapter extends StatelessWidget {
-  final clientCard = new Container(
-    height: 124.0,
-    margin: new EdgeInsets.only(left: 46.0),
-    decoration: new BoxDecoration(
-      color: new Color(0xFF333366),
-      shape: BoxShape.rectangle,
-      borderRadius: new BorderRadius.circular(8.0),
-      boxShadow: <BoxShadow>[
-        new BoxShadow(
-          color: Colors.black12,
-          blurRadius: 10.0,
-          offset: new Offset(0.0, 10.0),
-        ),
-      ],
-    ),
-  );
+  ClienteAdapter(this.clase);
 
-  final clientThumbnail = new Container(
-    margin: new EdgeInsets.symmetric(vertical: 16.0),
-    alignment: FractionalOffset.centerLeft,
-    child: new Image(
-      image: new AssetImage("assets/images/mars.png"),
-      height: 92.0,
-      width: 92.0,
-    ),
-  );
+  Clase clase;
 
   @override
   Widget build(BuildContext context) {
     return new Container(
-        height: 120.0,
         margin: const EdgeInsets.symmetric(
-          vertical: 16.0,
-          horizontal: 24.0,
+          vertical: 5.0,
+          horizontal: 15.0,
         ),
         child: new Stack(
-          children: <Widget>[
-            clientCard,
-            clientThumbnail,
-          ],
+          children: <Widget>[getClase(context)],
         ));
+  }
+
+  final Widget reagendar = Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+      elevation: 15.0,
+      child: Container(
+          height: 40,
+          width: 40,
+          margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+          decoration: BoxDecoration(
+              color: Colors.transparent,
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage("assets/images/automatico.png")))));
+
+  final Widget falta = Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+      elevation: 15.0,
+      child: Container(
+          height: 40,
+          width: 40,
+          margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+          decoration: BoxDecoration(
+              color: Colors.transparent,
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage("assets/images/automatico.png")))));
+  final Widget contacto = Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+      elevation: 15.0,
+      child: Container(
+          height: 40,
+          width: 40,
+          margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+          decoration: BoxDecoration(
+              color: Colors.transparent,
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage("assets/images/automatico.png")))));
+
+  Container getClase(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(10),
+      child: Material(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        elevation: 5.0,
+        color: AppColors.green,
+        child: Column(
+          children: <Widget>[
+            Container(
+                margin: EdgeInsets.all(5),
+                child: Text(
+                  clase.cliente.nombre,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: "GoogleSans",
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                  textAlign: TextAlign.center,
+                )),
+            Material(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+              elevation: 15.0,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+                        child: Text(
+                          Strings.horario,
+                          style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 16.0,
+                              fontFamily: "GoogleSans",
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                        child: Text(
+                          clase.horaInicio + " - " + clase.horaFin,
+                          style: TextStyle(
+                              color: AppColors.red,
+                              fontSize: 16.0,
+                              fontFamily: "GoogleSans",
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 30),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                        child: Text(
+                          clase.curso.curso,
+                          style: TextStyle(
+                              color: AppColors.yellowDark,
+                              fontSize: 16.0,
+                              fontFamily: "GoogleSans",
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        height: 40,
+                        width: 40,
+                        margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: clase.auto.idAuto == 1
+                                  ? AssetImage("assets/images/automatico.png")
+                                  : clase.auto.idAuto == 2
+                                      ? AssetImage("assets/images/estandar.png")
+                                      : AssetImage("assets/images/ambos.png")),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+                        child: Text(
+                          Strings.instructor,
+                          style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 16.0,
+                              fontFamily: "GoogleSans",
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                        child: Text(
+                          clase.instructor.nombre,
+                          style: TextStyle(
+                              color: AppColors.green,
+                              fontSize: 16.0,
+                              fontFamily: "GoogleSans",
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
