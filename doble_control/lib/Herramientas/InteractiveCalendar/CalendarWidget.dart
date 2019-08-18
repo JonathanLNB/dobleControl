@@ -22,6 +22,7 @@ class InteractiveCalendar extends StatefulWidget {
 }
 
 class InteractiveCalendarState extends State<InteractiveCalendar> {
+  var date = new DateTime.now();
   double WIDTH, HEIGHT, MARGIN, WIDTH_CELL;
   double _previousZoom;
   double _zoom = 1.0;
@@ -33,6 +34,7 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   DateTime _dateSelected = DateTime.now();
   DateTime _dateHover = DateTime.now();
   DateTime _tempDateSelected = DateTime.now();
+  int meses = -5;
   bool _isLongPressed = false;
 
   List<List<Clase>> fakeEvents;
@@ -57,22 +59,12 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
             children: <Widget>[buildBody(context)]));
   }
 
-  Widget buildTitle() {
-    return Center(
-        child: Padding(
-            padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
-            child: Text(
-              DateFormat('MM/yyyy').format(DateTime.now()),
-              style: TextStyle(color: AppColors.yellowDark),
-            )));
-  }
-
   Widget buildBody(BuildContext context) {
     _startDate = getStartDate();
 
     List<CalendarBase> cells = [];
 
-    DateTime _now = DateTime.now();
+    DateTime _now = new DateTime(date.year, date.month - meses, date.day);
     for (int i = 0; i < 42; i++) {
       if (i == 0)
         ['D', 'L', 'M', 'X', 'J', 'V', 'S']
@@ -141,7 +133,8 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
                 child: CustomPaint(
                     painter: CalendarPainter(
                         isLongPress: _isLongPressed,
-                        title: DateFormat('MM/yyyy').format(DateTime.now()),
+                        title: DateFormat('MM/yyyy').format(new DateTime(
+                            date.year, date.month - meses, date.day)),
                         offset: _offset,
                         zoom: _zoom,
                         dateHover: _dateHover,
@@ -165,7 +158,8 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
     if (_isLongPressed) {
       setState(() => this._isLongPressed = false);
     } else {
-      if (_tempDateSelected.month == DateTime.now().month)
+      if (_tempDateSelected.month ==
+          new DateTime(date.year, date.month - meses, date.day).month)
         setState(() => this._dateSelected = this._tempDateSelected);
       print(DateFormat('dd/MM/yyyy').format(_dateSelected));
     }
@@ -198,7 +192,8 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   }
 
   void handleLongPress() {
-    if (_tempDateSelected.month == DateTime.now().month) {
+    if (_tempDateSelected.month ==
+        new DateTime(date.year, date.month - meses, date.day).month) {
       _dateSelected = _tempDateSelected;
       setState(() {
         this._isLongPressed = true;
@@ -209,10 +204,17 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
 
   DateTime getStartDate() {
     //todo monday => 1, sunday => 7
-    int _weekday = DateTime.now().weekday == 7 ? 0 : DateTime.now().weekday;
-    int _diff = (DateTime.now().day / 7).ceil() * 7 + _weekday;
+    int _weekday =
+        new DateTime(date.year, date.month - meses, date.day).weekday == 7
+            ? 0
+            : new DateTime(date.year, date.month - meses, date.day).weekday;
+    int _diff =
+        (new DateTime(date.year, date.month - meses, date.day).day / 7).ceil() *
+                7 +
+            _weekday;
 
-    DateTime _startMonth = DateTime.now().subtract(Duration(days: _diff));
+    DateTime _startMonth = new DateTime(date.year, date.month - meses, date.day)
+        .subtract(Duration(days: _diff));
     return _startMonth;
   }
 

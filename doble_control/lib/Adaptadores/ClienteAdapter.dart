@@ -1,6 +1,7 @@
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 
 class ClienteAdapter extends StatelessWidget {
@@ -10,59 +11,40 @@ class ClienteAdapter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-        margin: const EdgeInsets.symmetric(
-          vertical: 5.0,
-          horizontal: 15.0,
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.20,
+      child: Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 15.0,
+          ),
+          child: new Stack(
+            children: <Widget>[getClase(context)],
+          )),
+
+      secondaryActions: <Widget>[
+        IconSlideAction(
+          caption: 'Contacto',
+          color: AppColors.green,
+          icon: Icons.book,
+          onTap: () => {},
         ),
-        child: new Stack(
-          children: <Widget>[getClase(context)],
-        ));
+        IconSlideAction(
+          caption: 'Reagendar',
+          foregroundColor: AppColors.colorAccent,
+          color: AppColors.yellowDark,
+          icon: Icons.edit,
+          onTap: () => {},
+        ),
+        IconSlideAction(
+          caption: 'Falta',
+          color: AppColors.red,
+          icon: Icons.cancel,
+          onTap: () => {},
+        ),
+      ],
+    );
   }
-
-  final Widget reagendar = Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-      elevation: 15.0,
-      child: Container(
-          height: 40,
-          width: 40,
-          margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
-          decoration: BoxDecoration(
-              color: Colors.transparent,
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage("assets/images/automatico.png")))));
-
-  final Widget falta = Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-      elevation: 15.0,
-      child: Container(
-          height: 40,
-          width: 40,
-          margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
-          decoration: BoxDecoration(
-              color: Colors.transparent,
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage("assets/images/automatico.png")))));
-  final Widget contacto = Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-      elevation: 15.0,
-      child: Container(
-          height: 40,
-          width: 40,
-          margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
-          decoration: BoxDecoration(
-              color: Colors.transparent,
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage("assets/images/automatico.png")))));
 
   Container getClase(BuildContext context) {
     return Container(

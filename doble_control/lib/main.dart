@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
         body: SplashScreen(
           seconds: 5,
           navigateAfterSeconds: LogIn(),
-          image: Image.asset("assets/images/logo.jpg"),
-          photoSize: 60,
+          image: Image.asset("assets/images/logo.png"),
+          photoSize: 150,
           loaderColor: AppColors.yellow,
         ),
       ),

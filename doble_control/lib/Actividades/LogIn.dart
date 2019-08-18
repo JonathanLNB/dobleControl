@@ -79,7 +79,7 @@ class _LogIn extends State<LogIn> {
                                 height: 100,
                                 width: 400,
                                 image: AssetImage(
-                                    "assets/images/doblecontrol.jpg"),
+                                    "assets/images/doblecontrol.png"),
                               ),
                             ),
                             Text(
