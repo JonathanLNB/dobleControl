@@ -23,4 +23,7 @@ class Strings {
   static String misClientes = "Mis Clientes";
   static String cursoD = "Inicio de Curso";
   static String fechaD = "Fecha disponible";
+
+  static String proximoMes = "Mes proximo";
+  static String anteriorMes = "Mes anterior";
 }

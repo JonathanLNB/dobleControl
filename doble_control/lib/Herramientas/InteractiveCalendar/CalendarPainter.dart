@@ -229,7 +229,7 @@ class CalendarPainter extends CustomPainter {
               text: data[i]['value'].text.toString(),
               type: data[i]['value'].type);
         else {
-          int index =
+          /*int index =
               DateTime.now().weekday == 7 ? 0 : DateTime.now().weekday + i;
           String text = DateFormat('EEEE')
               .format(DateTime.now().subtract(Duration(days: index)));
@@ -238,6 +238,14 @@ class CalendarPainter extends CustomPainter {
           data[i]['style'].fontSize = 16.0;
           if (type.index > ECalendarZoomType.Medium.index)
             data[i]['style'].fontSize = 20.0;
+            */
+          data[i]['value'] = CalendarCellText(
+              text: data[i]['value'].text.toString(),
+              type: data[i]['value'].type);
+          data[i]['style'].fontSize = 16.0;
+          if (type.index > ECalendarZoomType.Medium.index)
+            data[i]['style'].fontSize = 20.0;
+
         }
       } else {
         DateTime _date = data[i]['value'].date;

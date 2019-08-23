@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarModel.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarPainter.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/Utils.dart';
+import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +37,7 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   DateTime _dateSelected = DateTime.now();
   DateTime _dateHover = DateTime.now();
   DateTime _tempDateSelected = DateTime.now();
-  int meses = -5;
+  int meses = 0;
   bool _isLongPressed = false;
 
   List<List<Clase>> fakeEvents;
@@ -86,23 +89,25 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
       cells.add(event..events = fakeEvents[i]);
     }
 
-    return Container(
-      child: ConstrainedBox(
-        child: Listener(
-            onPointerMove: (e) {
-              if (this._isLongPressed) {
-                //todo update long pressed
-                setState(() {
-                  this._offset = this._offset - e.delta;
-                  _dateHover =
-                      getDateByOffset(e.position - _offset) ?? _dateHover;
-                });
-              }
-            },
-            onPointerUp: (e) {
-              if (this._isLongPressed)
-                setState(() {
-                  /*//todo stop long pressed
+    return Stack(
+      children: <Widget>[
+        Container(
+          child: ConstrainedBox(
+            child: Listener(
+                onPointerMove: (e) {
+                  if (this._isLongPressed) {
+                    //todo update long pressed
+                    setState(() {
+                      this._offset = this._offset - e.delta;
+                      _dateHover =
+                          getDateByOffset(e.position - _offset) ?? _dateHover;
+                    });
+                  }
+                },
+                onPointerUp: (e) {
+                  if (this._isLongPressed)
+                    setState(() {
+                      /*//todo stop long pressed
                   this._isLongPressed = false;
                   //covert data from dateselected => datehover
                   int diffSelected = Duration(
@@ -125,32 +130,80 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
 
                   print('diffSelected: ' + diffSelected.toString());
                   print('diffHover: ' + diffHover.toString());*/
+                    });
+                },
+                child: GestureDetector(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 120),
+                    child: CustomPaint(
+                        painter: CalendarPainter(
+                            isLongPress: _isLongPressed,
+                            title: DateFormat('MM/yyyy').format(new DateTime(
+                                date.year, date.month - meses, date.day)),
+                            offset: _offset,
+                            zoom: _zoom,
+                            dateHover: _dateHover,
+                            widthCell: WIDTH_CELL,
+                            widthParent: WIDTH,
+                            values: cells,
+                            margin: MARGIN)),
+                  ),
+                  onLongPress: handleLongPress,
+                  onTap: handleTap,
+                  onTapDown: handleTapDown,
+                  onScaleStart: _isLongPressed ? null : handleScaleStart,
+                  onScaleUpdate: _isLongPressed ? null : handleScaleUpdate,
+                )),
+            constraints: BoxConstraints.expand(width: WIDTH, height: HEIGHT),
+          ),
+        ),
+        new Padding(
+          padding: Platform.isAndroid
+              ? EdgeInsets.only(left: 20, top: 115, right: 20)
+              : EdgeInsets.only(left: 20, top: 125, right: 20),
+          child: new Align(
+            alignment: Alignment.topRight,
+            child: new FloatingActionButton(
+              heroTag: "Siguiente",
+              backgroundColor: AppColors.colorAccent,
+              onPressed: () {
+                setState(() {
+                  meses -= 1;
                 });
-            },
-            child: GestureDetector(
-              child: Container(
-                margin: EdgeInsets.only(top: 120),
-                child: CustomPaint(
-                    painter: CalendarPainter(
-                        isLongPress: _isLongPressed,
-                        title: DateFormat('MM/yyyy').format(new DateTime(
-                            date.year, date.month - meses, date.day)),
-                        offset: _offset,
-                        zoom: _zoom,
-                        dateHover: _dateHover,
-                        widthCell: WIDTH_CELL,
-                        widthParent: WIDTH,
-                        values: cells,
-                        margin: MARGIN)),
+              },
+              tooltip: Strings.proximoMes,
+              child: new Icon(
+                Icons.navigate_next,
+                size: 25,
+                color: AppColors.yellowDark,
               ),
-              onLongPress: handleLongPress,
-              onTap: handleTap,
-              onTapDown: handleTapDown,
-              onScaleStart: _isLongPressed ? null : handleScaleStart,
-              onScaleUpdate: _isLongPressed ? null : handleScaleUpdate,
-            )),
-        constraints: BoxConstraints.expand(width: WIDTH, height: HEIGHT),
-      ),
+            ),
+          ),
+        ),
+        new Padding(
+          padding: Platform.isAndroid
+              ? EdgeInsets.only(left: 20, top: 115, right: 20)
+              : EdgeInsets.only(left: 20, top: 125, right: 20),
+          child: new Align(
+            alignment: Alignment.topLeft,
+            child: new FloatingActionButton(
+              heroTag: "Anterior",
+              backgroundColor: AppColors.colorAccent,
+              onPressed: () {
+                setState(() {
+                  meses += 1;
+                });
+              },
+              tooltip: Strings.proximoMes,
+              child: new Icon(
+                Icons.navigate_before,
+                size: 25,
+                color: AppColors.yellowDark,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
