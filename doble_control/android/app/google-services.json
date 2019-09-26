@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "174501088959",
+    "firebase_url": "https://escuela-doblecontrol.firebaseio.com",
+    "project_id": "escuela-doblecontrol",
+    "storage_bucket": "escuela-doblecontrol.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174501088959:android:318bb9bcba9752d4af400a",
+        "android_client_info": {
+          "package_name": "com.jonathanlnb.doble_control"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "174501088959-dtj09t03kbfdkucgj3u0isbhls3lfjjg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jonathanlnb.doble_control",
+            "certificate_hash": "382b21a4212ed8742c2ad4e0c8031c0ec0814375"
+          }
+        },
+        {
+          "client_id": "174501088959-frsv78k1amuh2m3k6bbs35mblia0oqe1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3V73e3G9EaNH-Tv-Fy2iyNk5Nz33QVnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174501088959-frsv78k1amuh2m3k6bbs35mblia0oqe1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
