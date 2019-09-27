@@ -14,7 +14,9 @@ class Strings {
   static String horario = "Horario: ";
   static String horario2 = "Horario";
   static String instructor = "Instructor: ";
+  static String instructor2 = "Instructor";
   static String curso = "Curso: ";
+  static String curso2 = "Curso";
   static String ingresar = "Ingresar";
   static String cerrar = "Cerrar";
   static String cerrarS = "Cerrar sesión";
@@ -52,8 +54,14 @@ class Strings {
   static String iNumCelular = "Ingresa tú número de celular";
   static String iDias = "Ingresa los días que puede trabajar";
   static String iHorario = "Ingresa las horas disponibles";
+  static String iHorario2 = "Ingresa horario";
   static String iDomicilio = "Ingresar domicilio";
   static String iEdad = "Ingresar edad";
+  static String iFiltro = "Filtrar por nombre";
+  static String iInstructor = "Ingresar un instructor";
+  static String iCurso = "Ingresar un curso";
+  static String iAuto = "Ingresar tipo de auto";
+  static String filtro = "Filtro";
   static String domicilio = "Domicilio";
   static String edad = "Edad";
   static String diasT = "Días que puede trabajar";
@@ -62,6 +70,12 @@ class Strings {
   static String verificacion = "Verificación";
   static String alumnonuevo = "¿Es un nuevo alumno?";
   static String siguiente = "Siguiente";
+  static String auto = "Auto";
+  static String fechaI = "Fecha Inicio";
+  static String fechaF = "Fecha Fin";
+  static String cursoEspecial = "¿Será un curso especial?";
+  static String iFecha = "Ingresar fecha";
+  static String fecha = "Fecha";
   static String verificacionInfo =
       "Enviamos un e-mail de verificación al correo electrónico. Ingresa, verifica la cuenta y vuelve para disfrutar de los beneficios de Doble Control.";
   static String fotoPersona =

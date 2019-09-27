@@ -124,8 +124,8 @@ class _SignIn extends State<SignIn> {
                               child: Image(
                                 height: 100,
                                 width: 400,
-                                image:
-                                    AssetImage("assets/images/doblecontrol.png"),
+                                image: AssetImage(
+                                    "assets/images/doblecontrol.png"),
                               ),
                             ),
                             getTitulo(context, Strings.nombre),
@@ -221,8 +221,11 @@ class _SignIn extends State<SignIn> {
       setState(() {
         if (horario) {
           horaF.add(picked.format(context));
-          for (int i = 0; i < horaF.length; i++)
-            horarios = "${horaI[i]} - ${horaF[i]}\n";
+          horarios = "";
+          for (int i = 0; i < horaF.length; i++) {
+            horarios += "${horaI[i]} - ${horaF[i]}";
+            if (i < horaF.length - 1) horarios += "\n";
+          }
         } else {
           horaI.add(picked.format(context));
           _selectTime();
@@ -792,7 +795,8 @@ class _SignIn extends State<SignIn> {
                       for (int i = 0; i < _dias.length; i++) {
                         if (_dias[i] == Strings.dias[index]) {
                           setState(() {
-                            _dias.removeWhere((String dia) => dia == Strings.dias[i]);
+                            _dias.removeWhere(
+                                (String dia) => dia == Strings.dias[i]);
                             return;
                           });
                         }

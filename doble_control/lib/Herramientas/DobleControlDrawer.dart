@@ -1,3 +1,4 @@
+import 'package:doble_control/Actividades/Alumnos.dart';
 import 'package:doble_control/Actividades/LogIn.dart';
 import 'package:doble_control/Actividades/Principal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -95,10 +96,8 @@ class _DobleControlDrawer extends State<DobleControlDrawer> {
               color: AppColors.green,
             ),
             onTap: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => Principal()),
-                  ModalRoute.withName('/principal'));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Alumnos()));
             },
           ),
           ListTile(

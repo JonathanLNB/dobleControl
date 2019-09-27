@@ -1,24 +1,49 @@
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
-import 'package:doble_control/TDA/Cliente.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 
-class ClienteAdapter extends StatelessWidget {
-  ClienteAdapter(this.cliente);
+class ClaseAdapter extends StatelessWidget {
+  ClaseAdapter(this.clase);
 
-  Cliente cliente;
+  Clase clase;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 15.0,
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.20,
+      child: Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 15.0,
+          ),
+          child: new Stack(
+            children: <Widget>[getClase(context)],
+          )),
+
+      secondaryActions: <Widget>[
+        IconSlideAction(
+          caption: 'Contacto',
+          color: AppColors.green,
+          icon: Icons.book,
+          onTap: () => {},
         ),
-        child: new Stack(
-          children: <Widget>[getClase(context)],
-        ));
+        IconSlideAction(
+          caption: 'Reagendar',
+          foregroundColor: AppColors.colorAccent,
+          color: AppColors.yellowDark,
+          icon: Icons.edit,
+          onTap: () => {},
+        ),
+        IconSlideAction(
+          caption: 'Falta',
+          color: AppColors.red,
+          icon: Icons.cancel,
+          onTap: () => {},
+        ),
+      ],
+    );
   }
 
   Container getClase(BuildContext context) {
@@ -34,7 +59,7 @@ class ClienteAdapter extends StatelessWidget {
             Container(
                 margin: EdgeInsets.all(5),
                 child: Text(
-                  cliente.nombre,
+                  clase.cliente.nombre,
                   style: TextStyle(
                       fontSize: 20,
                       fontFamily: "GoogleSans",
@@ -47,17 +72,18 @@ class ClienteAdapter extends StatelessWidget {
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10)),
+              elevation: 15.0,
               child: Column(
                 children: <Widget>[
                   Row(
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+                        margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
                         child: Text(
-                          "${Strings.numTelefono}:",
+                          Strings.horario,
                           style: TextStyle(
                               color: AppColors.black,
-                              fontSize: 14.0,
+                              fontSize: 16.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
                         ),
@@ -65,10 +91,24 @@ class ClienteAdapter extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                         child: Text(
-                          cliente.telefono,
+                          clase.horaInicio + " - " + clase.horaFin,
                           style: TextStyle(
                               color: AppColors.red,
-                              fontSize: 14.0,
+                              fontSize: 16.0,
+                              fontFamily: "GoogleSans",
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 30),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
+                        child: Text(
+                          clase.curso.curso,
+                          style: TextStyle(
+                              color: AppColors.yellowDark,
+                              fontSize: 16.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
                         ),
@@ -78,12 +118,27 @@ class ClienteAdapter extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       Container(
+                        height: 40,
+                        width: 40,
+                        margin: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: clase.auto.idAuto == 1
+                                  ? AssetImage("assets/images/automatico.png")
+                                  : clase.auto.idAuto == 2
+                                      ? AssetImage("assets/images/estandar.png")
+                                      : AssetImage("assets/images/ambos.png")),
+                        ),
+                      ),
+                      Container(
                         margin: EdgeInsets.only(left: 15, top: 5, bottom: 5),
                         child: Text(
-                          "${Strings.numCelular}:",
+                          Strings.instructor,
                           style: TextStyle(
                               color: AppColors.black,
-                              fontSize: 14.0,
+                              fontSize: 16.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
                         ),
@@ -91,26 +146,15 @@ class ClienteAdapter extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                         child: Text(
-                          cliente.celular,
+                          clase.instructor.nombre,
                           style: TextStyle(
                               color: AppColors.green,
-                              fontSize: 14.0,
+                              fontSize: 16.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
-                    child: Text(
-                      cliente.email,
-                      style: TextStyle(
-                          color: AppColors.yellowDark,
-                          fontSize: 14.0,
-                          fontFamily: "GoogleSans",
-                          fontWeight: FontWeight.bold),
-                    ),
                   ),
                 ],
               ),

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:doble_control/Actividades/Calendario.dart';
-import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
+import 'package:doble_control/Adaptadores/ClaseAdapter.dart';
 import 'package:doble_control/Dialogos/AdminDialog.dart';
 import 'package:doble_control/Herramientas/DobleControlDrawer.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarScreen.dart';
@@ -193,7 +193,7 @@ class _Principal extends State<Principal> {
         Clase aux = clases[index];
         return Container(
           margin: EdgeInsets.only(top: 10, bottom: 10),
-          child: ClienteAdapter(aux),
+          child: ClaseAdapter(aux),
         );
       },
       scrollDirection: Axis.vertical,

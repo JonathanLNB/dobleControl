@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
+import 'package:doble_control/TDA/Cliente.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
+import 'Curso.dart';
 import 'LogIn.dart';
 import 'Principal.dart';
 
@@ -24,6 +27,7 @@ class Alumnos extends StatefulWidget {
 }
 
 class _Alumnos extends State<Alumnos> {
+  TextEditingController filtroC = new TextEditingController();
   TextEditingController nombresC = new TextEditingController();
   TextEditingController correoC = new TextEditingController();
   TextEditingController numTelefonoC = new TextEditingController();
@@ -31,7 +35,8 @@ class _Alumnos extends State<Alumnos> {
   TextEditingController domicilioC = new TextEditingController();
   TextEditingController edadC = new TextEditingController();
   List<String> _dias, horaI, horaF;
-  String foto, dias, horarios;
+  List<Cliente> _clientes = new List<Cliente>();
+  String dias, horarios;
   int password, idUser;
   bool passwordVisible,
       nombresE,
@@ -40,15 +45,37 @@ class _Alumnos extends State<Alumnos> {
       numCelularE,
       domicilioE,
       edadE,
-      nuevo = false;
+      filtroE,
+      antiguo = false;
 
   _Alumnos();
 
   @override
   void initState() {
+    _clientes.add(new Cliente(
+        "Jonathan Leonardo Nieto Bustamante",
+        "San Isidro Culiacan",
+        "12",
+        "Culiacan",
+        "4111008552",
+        "55",
+        "jonathanleonardonb@gmail.com"));
+    _clientes.add(new Cliente("Pedro", "San Isidro Culiacan", "12", "Culiacan",
+        "555", "55", "hoal@gmail.com"));
+    _clientes.add(new Cliente("Mario", "San Isidro Culiacan", "12", "Culiacan",
+        "555", "55", "hoal@gmail.com"));
+    _clientes.add(new Cliente("Javier", "San Isidro Culiacan", "12", "Culiacan",
+        "555", "55", "hoal@gmail.com"));
+    _clientes.add(new Cliente("Walter", "San Isidro Culiacan", "12", "Culiacan",
+        "555", "55", "hoal@gmail.com"));
     horarios = Strings.iHorario;
     passwordVisible = true;
     nombresE = false;
+    domicilioE = false;
+    filtroE = false;
+    numCelularE = false;
+    numTelefonoE = false;
+    edadE = false;
     correoE = false;
   }
 
@@ -56,30 +83,13 @@ class _Alumnos extends State<Alumnos> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(children: <Widget>[
-        NavigationBar(true),
-        Container(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: Platform.isAndroid
-                ? EdgeInsets.only(top: 120)
-                : EdgeInsets.only(top: 120),
-            child: Text(
-              Strings.registrate,
-              style: TextStyle(
-                  color: AppColors.colorAccent,
-                  fontSize: 30.0,
-                  fontFamily: "GoogleSans",
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
         ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
             Column(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(top: 150, bottom: 20),
+                  margin: EdgeInsets.only(top: 100, bottom: 20),
                   alignment: Alignment.center,
                   child: Material(
                     shape: RoundedRectangleBorder(
@@ -95,10 +105,10 @@ class _Alumnos extends State<Alumnos> {
                             Transform.scale(
                               scale: 2.0,
                               child: new Switch(
-                                value: nuevo,
+                                value: antiguo,
                                 onChanged: (bool value) {
                                   setState(() {
-                                    nuevo = value;
+                                    antiguo = value;
                                   });
                                 },
                                 activeColor: AppColors.green,
@@ -114,43 +124,25 @@ class _Alumnos extends State<Alumnos> {
                             Padding(
                               padding: EdgeInsets.all(8),
                             ),
-                            getTitulo(context, Strings.nombre),
-                            getNombre(context),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                            ),
-                            getTitulo(context, Strings.domicilio),
-                            getDomicilio(context),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                            ),
-                            getTitulo(context, Strings.edad),
-                            getEdad(context),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                            ),
-                            getTitulo(context, Strings.numTelefono),
-                            getNumTelefono(context),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                            ),
-                            getTitulo(context, Strings.numCelular),
-                            getNumCelular(context),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                            ),
-                            getTitulo(context, Strings.correo),
-                            getCorreo(context),
+                            antiguo
+                                ? getNewAlumno(context)
+                                : getOldAlumnos(context),
                             Padding(
                               padding: EdgeInsets.all(10),
                               child: new RaisedButton(
                                 onPressed: () {
-                                  showDialog(
+                                  /*showDialog(
                                     context: context,
                                     barrierDismissible: false,
                                     builder: (context) => _onLoading(context),
+                                  );*/
+                                  //AQUI EL USUARIO
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Curso(_clientes[0])),
                                   );
-                                  registerUser();
                                 },
                                 child: Text(
                                   Strings.siguiente,
@@ -172,7 +164,82 @@ class _Alumnos extends State<Alumnos> {
             )
           ],
         ),
+        NavigationBar(false),
+        Padding(
+          padding: Platform.isAndroid
+              ? EdgeInsets.only(left: 15, top: 40, right: 10)
+              : EdgeInsets.only(left: 15, top: 50, right: 10),
+          child: Text(
+            Strings.nuevoCurso,
+            style: TextStyle(
+                color: AppColors.colorAccent,
+                fontSize: 30.0,
+                fontFamily: "GoogleSans",
+                fontWeight: FontWeight.bold),
+          ),
+        ),
       ]),
+    );
+  }
+
+  Widget getNewAlumno(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        getTitulo(context, Strings.nombre),
+        getNombre(context),
+        Padding(
+          padding: EdgeInsets.all(10),
+        ),
+        getTitulo(context, Strings.domicilio),
+        getDomicilio(context),
+        Padding(
+          padding: EdgeInsets.all(10),
+        ),
+        getTitulo(context, Strings.edad),
+        getEdad(context),
+        Padding(
+          padding: EdgeInsets.all(10),
+        ),
+        getTitulo(context, Strings.numTelefono),
+        getNumTelefono(context),
+        Padding(
+          padding: EdgeInsets.all(10),
+        ),
+        getTitulo(context, Strings.numCelular),
+        getNumCelular(context),
+        Padding(
+          padding: EdgeInsets.all(10),
+        ),
+        getTitulo(context, Strings.correo),
+        getCorreo(context),
+      ],
+    );
+  }
+
+  Widget getOldAlumnos(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        getTitulo(context, Strings.filtro),
+        getFiltro(context),
+        Padding(
+          padding: EdgeInsets.all(10),
+        ),
+        Container(
+          height: 370,
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              Cliente aux = _clientes[index];
+              return Container(
+                margin: EdgeInsets.only(top: 5, bottom: 5),
+                child: ClienteAdapter(aux),
+              );
+            },
+            scrollDirection: Axis.vertical,
+            itemCount: _clientes.length,
+            shrinkWrap: true,
+          ),
+        )
+      ],
     );
   }
 
@@ -220,6 +287,48 @@ class _Alumnos extends State<Alumnos> {
                 errorText: nombresE ? Strings.campovacio : null,
                 suffixIcon: Icon(
                   Icons.account_circle,
+                  color: AppColors.black,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getFiltro(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 40,
+        child: Material(
+          elevation: 10,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(5),
+                  topRight: Radius.circular(5))),
+          child: Padding(
+            padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+            child: TextField(
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.next,
+              controller: filtroC,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: Strings.iFiltro,
+                hintStyle: TextStyle(
+                    fontFamily: "GoogleSans",
+                    color: AppColors.grey,
+                    fontSize: 17),
+                errorStyle: TextStyle(
+                    fontFamily: "GoogleSans",
+                    color: AppColors.red,
+                    fontSize: 17),
+                errorText: filtroE ? Strings.campovacio : null,
+                suffixIcon: Icon(
+                  Icons.search,
                   color: AppColors.black,
                 ),
               ),
@@ -459,17 +568,6 @@ class _Alumnos extends State<Alumnos> {
         ModalRoute.withName('/principal'));
   }
 
-  void registerUser() {
-    /*if (validation()) RegisterAPI();*/
-  }
-
-  void goLogIn() {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => LogIn()),
-        ModalRoute.withName('/logIn'));
-  }
-
   bool validation() {
     bool access = true;
     if (nombresC.text.length == 0) {
@@ -484,73 +582,4 @@ class _Alumnos extends State<Alumnos> {
       correoE = false;
     return access;
   }
-
-/*void RegisterAPI() {
-    String server = "${Strings.server}users";
-    Future<String> getData() async {
-      try {
-        http.Response response;
-        if (password != 2) {
-          response = await http.post(Uri.encodeFull(server),
-              headers: {"content-type": "application/json"},
-              body: jsonEncode({
-                "username": userC.text,
-                "name": nombresC.text,
-                "lastname": apellidosC.text,
-                "email": correoC.text,
-                "password": "Ema1lPas5",
-                "profile_img": image,
-                "birthday": fechaN,
-                "birthplace": "",
-                "gender_id": generoC,
-                "role_id": 1
-              }));
-        } else {
-          print("${server}/$idUser");
-          response = await http.put(Uri.encodeFull("${server}/$idUser"),
-              headers: {
-                "content-type": "application/json",
-                'Authorization': 'Bearer $token'
-              },
-              body: jsonEncode({
-                "username": userC.text,
-                "name": nombresC.text,
-                "lastname": apellidosC.text,
-                "profile_img": image,
-                "birthday": fechaN,
-                "birthplace": "",
-                "gender_id": generoC,
-                "role_id": 1
-              }));
-        }
-        Navigator.pop(context);
-        print(response.body);
-        Map<String, dynamic> data = jsonDecode(response.body);
-        if (data["error"] != null) {
-          Fluttertoast.showToast(msg: data["error"]);
-        } else {
-          Registro dataM = new Registro.fromJson(data);
-          if (password == 1)
-            registerUserFirebase(context);
-          else {
-            await info.setIdUser(dataM.id);
-            await info.setNombre(nombresC.text);
-            await info.setUsername(userC.text);
-            await info.setApellidos(apellidosC.text);
-            await info.setGenero("$generoC");
-            await info.setRol("1");
-            await info.setAPIToken(dataM.apiToken);
-            print("Token: ${await info.getAPIToken()}");
-            goPrincipal();
-          }
-        }
-      } catch (e) {
-        Fluttertoast.showToast(msg: Strings.errorS);
-      }
-    }
-
-    getData();
-  }
-  */
-
 }
