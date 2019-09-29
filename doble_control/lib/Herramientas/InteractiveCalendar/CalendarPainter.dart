@@ -92,9 +92,11 @@ class CalendarPainter extends CustomPainter {
           style.offset,
           Offset(style.offset.dx + style.size.width,
               style.offset.dy + style.size.height));
-      if (text is CalendarCellEvent)
-        paintEvents(canvas, text.events, style.offset);
-      paintValue(canvas, text, style, rect);
+      if (text.type != ECalendarCellType.Disable) {
+        if (text is CalendarCellEvent)
+          paintEvents(canvas, text.events, style.offset);
+        paintValue(canvas, text, style, rect);
+      }
     }
   }
 
@@ -245,7 +247,6 @@ class CalendarPainter extends CustomPainter {
           data[i]['style'].fontSize = 16.0;
           if (type.index > ECalendarZoomType.Medium.index)
             data[i]['style'].fontSize = 20.0;
-
         }
       } else {
         DateTime _date = data[i]['value'].date;

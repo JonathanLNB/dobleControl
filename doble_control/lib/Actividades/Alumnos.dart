@@ -10,6 +10,7 @@ import 'package:doble_control/TDA/Cliente.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -37,7 +38,7 @@ class _Alumnos extends State<Alumnos> {
   List<String> _dias, horaI, horaF;
   List<Cliente> _clientes = new List<Cliente>();
   String dias, horarios;
-  int password, idUser;
+  int idUser;
   bool passwordVisible,
       nombresE,
       correoE,
@@ -56,18 +57,17 @@ class _Alumnos extends State<Alumnos> {
         "Jonathan Leonardo Nieto Bustamante",
         "San Isidro Culiacan",
         "12",
-        "Culiacan",
         "4111008552",
         "55",
         "jonathanleonardonb@gmail.com"));
-    _clientes.add(new Cliente("Pedro", "San Isidro Culiacan", "12", "Culiacan",
-        "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente("Mario", "San Isidro Culiacan", "12", "Culiacan",
-        "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente("Javier", "San Isidro Culiacan", "12", "Culiacan",
-        "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente("Walter", "San Isidro Culiacan", "12", "Culiacan",
-        "555", "55", "hoal@gmail.com"));
+    _clientes.add(new Cliente(
+        "Pedro", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
+    _clientes.add(new Cliente(
+        "Mario", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
+    _clientes.add(new Cliente(
+        "Javier", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
+    _clientes.add(new Cliente(
+        "Walter", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
     horarios = Strings.iHorario;
     passwordVisible = true;
     nombresE = false;
@@ -127,35 +127,46 @@ class _Alumnos extends State<Alumnos> {
                             antiguo
                                 ? getNewAlumno(context)
                                 : getOldAlumnos(context),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: new RaisedButton(
-                                onPressed: () {
-                                  /*showDialog(
+                            antiguo
+                                ? Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: new RaisedButton(
+                                      onPressed: () {
+                                        /*showDialog(
                                     context: context,
                                     barrierDismissible: false,
                                     builder: (context) => _onLoading(context),
                                   );*/
-                                  //AQUI EL USUARIO
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            Curso(_clientes[0])),
-                                  );
-                                },
-                                child: Text(
-                                  Strings.siguiente,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: "GoogleSans",
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.colorAccent),
-                                  textAlign: TextAlign.center,
-                                ),
-                                color: AppColors.yellowDark,
-                              ),
-                            ),
+                                        //AQUI EL USUARIO
+                                        if (validation()) {
+                                          Cliente cliente = new Cliente(
+                                              nombresC.text,
+                                              domicilioC.text,
+                                              edadC.text,
+                                              numTelefonoC.text,
+                                              numCelularC.text,
+                                              correoC.text);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Curso(cliente)),
+                                          );
+                                        }
+                                      },
+                                      child: Text(
+                                        Strings.siguiente,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "GoogleSans",
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.colorAccent),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      color: AppColors.yellowDark,
+                                    ),
+                                  )
+                                : Container(),
                           ],
                         )),
                   ),
@@ -284,7 +295,7 @@ class _Alumnos extends State<Alumnos> {
                     fontFamily: "GoogleSans",
                     color: AppColors.red,
                     fontSize: 17),
-                errorText: nombresE ? Strings.campovacio : null,
+                errorText: nombresE ? "Error: ${Strings.campovacio}" : null,
                 suffixIcon: Icon(
                   Icons.account_circle,
                   color: AppColors.black,
@@ -326,7 +337,7 @@ class _Alumnos extends State<Alumnos> {
                     fontFamily: "GoogleSans",
                     color: AppColors.red,
                     fontSize: 17),
-                errorText: filtroE ? Strings.campovacio : null,
+                errorText: filtroE ? "Error: ${Strings.campovacio}" : null,
                 suffixIcon: Icon(
                   Icons.search,
                   color: AppColors.black,
@@ -367,7 +378,7 @@ class _Alumnos extends State<Alumnos> {
                     fontFamily: "GoogleSans",
                     color: AppColors.red,
                     fontSize: 17),
-                errorText: numTelefonoE ? Strings.campovacio : null,
+                errorText: numTelefonoE ? "Error: ${Strings.campovacio}" : null,
                 suffixIcon: Icon(
                   Icons.phone,
                   color: AppColors.black,
@@ -409,7 +420,7 @@ class _Alumnos extends State<Alumnos> {
                     fontFamily: "GoogleSans",
                     color: AppColors.red,
                     fontSize: 17),
-                errorText: numCelularE ? Strings.campovacio : null,
+                errorText: numCelularE ? "Error: ${Strings.campovacio}" : null,
                 suffixIcon: Icon(
                   Icons.phone_android,
                   color: AppColors.black,
@@ -451,7 +462,7 @@ class _Alumnos extends State<Alumnos> {
                     fontFamily: "GoogleSans",
                     color: AppColors.red,
                     fontSize: 17),
-                errorText: domicilioE ? Strings.campovacio : null,
+                errorText: domicilioE ? "Error: ${Strings.campovacio}" : null,
                 suffixIcon: Icon(
                   Icons.map,
                   color: AppColors.black,
@@ -493,7 +504,7 @@ class _Alumnos extends State<Alumnos> {
                     fontFamily: "GoogleSans",
                     color: AppColors.red,
                     fontSize: 17),
-                errorText: edadE ? Strings.campovacio : null,
+                errorText: edadE ? "Error: ${Strings.campovacio}" : null,
                 suffixIcon: Icon(
                   Icons.timelapse,
                   color: AppColors.black,
@@ -525,7 +536,6 @@ class _Alumnos extends State<Alumnos> {
               textInputAction: TextInputAction.next,
               controller: correoC,
               decoration: InputDecoration(
-                enabled: password == 1,
                 border: InputBorder.none,
                 hintText: Strings.iCorreo,
                 hintStyle: TextStyle(
@@ -536,7 +546,7 @@ class _Alumnos extends State<Alumnos> {
                     fontFamily: "GoogleSans",
                     color: AppColors.red,
                     fontSize: 17),
-                errorText: correoE ? Strings.campovacio : null,
+                errorText: correoE ? "Error: ${Strings.campovacio}" : null,
                 suffixIcon: Icon(
                   Icons.email,
                   color: AppColors.black,
@@ -580,6 +590,28 @@ class _Alumnos extends State<Alumnos> {
       correoE = true;
     } else
       correoE = false;
+    if (domicilioC.text.length == 0) {
+      access = false;
+      domicilioE = true;
+    } else
+      domicilioE = false;
+    if (edadC.text.length == 0) {
+      access = false;
+      edadE = true;
+    } else
+      edadE = false;
+    if (numTelefonoC.text.length == 0) {
+      access = false;
+      numTelefonoE = true;
+    } else
+      numTelefonoE = false;
+    if (numCelularC.text.length == 0) {
+      access = false;
+      numCelularE = true;
+    } else
+      numCelularE = false;
+    if(!access)
+      Fluttertoast.showToast(msg: Strings.errorForm);
     return access;
   }
 }

@@ -33,7 +33,7 @@ class Strings {
   static String aceptar = "Aceptar";
   static String confirmacion = "Confirmación 😱";
   static String registrar = "Registrarse";
-  static String registrate = "Regístrate";
+  static String registrate = "Regístrar Instructor";
   static String campovacio = "¡Campo vacio!";
   static String nombre = "Nombre Completo";
   static String actualizar = "Actualizar";
@@ -76,6 +76,8 @@ class Strings {
   static String cursoEspecial = "¿Será un curso especial?";
   static String iFecha = "Ingresar fecha";
   static String fecha = "Fecha";
+  static String nuevoInstructor = "Nuevo Instructor";
+  static String errorForm = "No has completado todo el formulario 😱";
   static String verificacionInfo =
       "Enviamos un e-mail de verificación al correo electrónico. Ingresa, verifica la cuenta y vuelve para disfrutar de los beneficios de Doble Control.";
   static String fotoPersona =
@@ -89,4 +91,5 @@ class Strings {
     "Sabado",
     "Domingo",
   ];
+
 }

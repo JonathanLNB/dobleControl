@@ -1,14 +1,14 @@
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
-import 'package:doble_control/TDA/Instructor.dart';
+import 'package:doble_control/TDA/Cliente.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 
-class InstructorAdapter extends StatelessWidget {
-  InstructorAdapter(this.instructor);
+class ClienteAdapterL extends StatelessWidget {
+  ClienteAdapterL(this.cliente);
 
-  Instructor instructor;
+  Cliente cliente;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,15 @@ class InstructorAdapter extends StatelessWidget {
           )),
       secondaryActions: <Widget>[
         IconSlideAction(
-          caption: 'Contacto',
+          caption: 'Editar',
           color: AppColors.green,
+          icon: Icons.edit,
+          onTap: () => {},
+        ),
+        IconSlideAction(
+          caption: 'Contacto',
+          foregroundColor: AppColors.colorAccent,
+          color: AppColors.yellowDark,
           icon: Icons.book,
           onTap: () => {},
         ),
@@ -52,7 +59,7 @@ class InstructorAdapter extends StatelessWidget {
             Container(
                 margin: EdgeInsets.all(5),
                 child: Text(
-                  instructor.nombre,
+                  cliente.nombre,
                   style: TextStyle(
                       fontSize: 20,
                       fontFamily: "GoogleSans",
@@ -84,7 +91,7 @@ class InstructorAdapter extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                         child: Text(
-                          instructor.telefono,
+                          cliente.telefono,
                           style: TextStyle(
                               color: AppColors.greyDark,
                               fontSize: 14.0,
@@ -110,7 +117,7 @@ class InstructorAdapter extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                         child: Text(
-                          instructor.celular,
+                          cliente.celular,
                           style: TextStyle(
                               color: AppColors.greyDark,
                               fontSize: 14.0,
@@ -123,7 +130,7 @@ class InstructorAdapter extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                     child: Text(
-                      instructor.email,
+                      cliente.email,
                       style: TextStyle(
                           color: AppColors.greyDark,
                           fontSize: 14.0,

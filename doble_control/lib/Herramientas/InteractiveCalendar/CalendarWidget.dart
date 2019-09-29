@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:doble_control/Actividades/ConsultarFecha.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarModel.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarPainter.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/Utils.dart';
@@ -9,18 +10,20 @@ import 'package:doble_control/TDA/Clase.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+//En esta actividad hago el consumo web
+
 var APP_BAR_SIZE = 80.0;
 double HEIGHT_TITLE_WEEKDAY = 24.0;
 double HEIGHT_TITLE_MONTH = 26.0;
 
 class InteractiveCalendar extends StatefulWidget {
-  List<List<Clase>> fakeEvents;
+  List<List<Clase>> eventos;
 
-  InteractiveCalendar(this.fakeEvents);
+  InteractiveCalendar(this.eventos);
 
   @override
   State<StatefulWidget> createState() {
-    return InteractiveCalendarState(fakeEvents);
+    return InteractiveCalendarState(eventos);
   }
 }
 
@@ -40,9 +43,9 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   int meses = 0;
   bool _isLongPressed = false;
 
-  List<List<Clase>> fakeEvents;
+  List<List<Clase>> eventos;
 
-  InteractiveCalendarState(this.fakeEvents);
+  InteractiveCalendarState(this.eventos);
 
   @override
   void initState() {
@@ -63,8 +66,9 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   }
 
   Widget buildBody(BuildContext context) {
+    int _diff = getDiferencia(true);
     _startDate = getStartDate();
-
+    //Aqui ya conozco la fecha en la que se inicia la pintadera
     List<CalendarBase> cells = [];
 
     DateTime _now = new DateTime(date.year, date.month - meses, date.day);
@@ -86,7 +90,10 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
         if (Utils.isEqual(_date, DateTime.now()))
           event = CalendarEvent.Today(_date, []);
       }
-      cells.add(event..events = fakeEvents[i]);
+      if (i < _diff || i-_diff >= eventos.length)
+        cells.add(event..events = new List<Clase>());
+      else
+        cells.add(event..events = eventos[i - _diff]);
     }
 
     return Stack(
@@ -122,9 +129,9 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
                       Duration(milliseconds: _startDate.millisecondsSinceEpoch)
                           .inDays;
 
-                  List<Clase> _temp = []..addAll(fakeEvents[diffSelected]);
-                  widget.fakeEvents[diffSelected] = [];
-                  widget.fakeEvents[diffHover] = widget.fakeEvents[diffHover]
+                  List<Clase> _temp = []..addAll(eventos[diffSelected]);
+                  widget.eventos[diffSelected] = [];
+                  widget.eventos[diffHover] = widget.eventos[diffHover]
                     ..addAll(_temp);
                   _dateSelected = _dateHover;
 
@@ -214,7 +221,10 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
       if (_tempDateSelected.month ==
           new DateTime(date.year, date.month - meses, date.day).month)
         setState(() => this._dateSelected = this._tempDateSelected);
-      print(DateFormat('dd/MM/yyyy').format(_dateSelected));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ConsultarDia(DateFormat('dd/MM/yyyy').format(_dateSelected), eventos[_dateSelected.day-1])));
     }
   }
 
@@ -257,6 +267,14 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
 
   DateTime getStartDate() {
     //todo monday => 1, sunday => 7
+    int _diff = getDiferencia(false);
+
+    DateTime _startMonth = new DateTime(date.year, date.month - meses, date.day)
+        .subtract(Duration(days: _diff));
+    return _startMonth;
+  }
+
+  int getDiferencia(bool weekday) {
     int _weekday =
         new DateTime(date.year, date.month - meses, date.day).weekday == 7
             ? 0
@@ -264,11 +282,9 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
     int _diff =
         (new DateTime(date.year, date.month - meses, date.day).day / 7).ceil() *
                 7 +
-            _weekday;
-
-    DateTime _startMonth = new DateTime(date.year, date.month - meses, date.day)
-        .subtract(Duration(days: _diff));
-    return _startMonth;
+            _weekday -
+            7;
+    return weekday ? _weekday : _diff;
   }
 
   DateTime getDateByOffset(Offset offset) {

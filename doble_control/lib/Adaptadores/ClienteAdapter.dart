@@ -1,3 +1,4 @@
+import 'package:doble_control/Actividades/Curso.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
@@ -12,13 +13,23 @@ class ClienteAdapter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 15.0,
-        ),
-        child: new Stack(
-          children: <Widget>[getClase(context)],
-        ));
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  Curso(cliente)),
+        );
+      },
+      child: Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 15.0,
+          ),
+          child: new Stack(
+            children: <Widget>[getClase(context)],
+          )),
+    );
   }
 
   Container getClase(BuildContext context) {
@@ -56,7 +67,7 @@ class ClienteAdapter extends StatelessWidget {
                         child: Text(
                           "${Strings.numTelefono}:",
                           style: TextStyle(
-                              color: AppColors.black,
+                              color: AppColors.green,
                               fontSize: 14.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
@@ -67,7 +78,7 @@ class ClienteAdapter extends StatelessWidget {
                         child: Text(
                           cliente.telefono,
                           style: TextStyle(
-                              color: AppColors.red,
+                              color: AppColors.greyDark,
                               fontSize: 14.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
@@ -82,7 +93,7 @@ class ClienteAdapter extends StatelessWidget {
                         child: Text(
                           "${Strings.numCelular}:",
                           style: TextStyle(
-                              color: AppColors.black,
+                              color: AppColors.green,
                               fontSize: 14.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
@@ -93,7 +104,7 @@ class ClienteAdapter extends StatelessWidget {
                         child: Text(
                           cliente.celular,
                           style: TextStyle(
-                              color: AppColors.green,
+                              color: AppColors.greyDark,
                               fontSize: 14.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),
@@ -106,7 +117,7 @@ class ClienteAdapter extends StatelessWidget {
                     child: Text(
                       cliente.email,
                       style: TextStyle(
-                          color: AppColors.yellowDark,
+                          color: AppColors.greyDark,
                           fontSize: 14.0,
                           fontFamily: "GoogleSans",
                           fontWeight: FontWeight.bold),

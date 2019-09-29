@@ -1,4 +1,5 @@
 import 'package:doble_control/Actividades/Alumnos.dart';
+import 'package:doble_control/Actividades/ListarPersonas.dart';
 import 'package:doble_control/Actividades/LogIn.dart';
 import 'package:doble_control/Actividades/Principal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -73,10 +74,10 @@ class _DobleControlDrawer extends State<DobleControlDrawer> {
                 style: TextStyle(
                     fontSize: 15,
                     fontFamily: "GoogleSans",
-                    color: AppColors.green)),
+                    color: AppColors.black)),
             trailing: Icon(
               Icons.calendar_today,
-              color: AppColors.green,
+              color: AppColors.black,
             ),
             onTap: () {
               Navigator.pushAndRemoveUntil(
@@ -90,10 +91,10 @@ class _DobleControlDrawer extends State<DobleControlDrawer> {
                 style: TextStyle(
                     fontSize: 15,
                     fontFamily: "GoogleSans",
-                    color: AppColors.green)),
+                    color: AppColors.black)),
             trailing: Icon(
               Icons.add,
-              color: AppColors.green,
+              color: AppColors.black,
             ),
             onTap: () {
               Navigator.push(
@@ -105,16 +106,16 @@ class _DobleControlDrawer extends State<DobleControlDrawer> {
                 style: TextStyle(
                     fontSize: 15,
                     fontFamily: "GoogleSans",
-                    color: AppColors.green)),
+                    color: AppColors.black)),
             trailing: Icon(
               Icons.contact_mail,
-              color: AppColors.green,
+              color: AppColors.black,
             ),
             onTap: () {
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Principal()),
-                  ModalRoute.withName('/guia'));
+                  MaterialPageRoute(
+                      builder: (context) => ListarPersonas(true)));
             },
           ),
           ListTile(
@@ -122,16 +123,16 @@ class _DobleControlDrawer extends State<DobleControlDrawer> {
                 style: TextStyle(
                     fontSize: 15,
                     fontFamily: "GoogleSans",
-                    color: AppColors.green)),
+                    color: AppColors.black)),
             trailing: Icon(
               Icons.people,
-              color: AppColors.green,
+              color: AppColors.black,
             ),
             onTap: () {
-              Navigator.pushAndRemoveUntil(
+              Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Principal()),
-                  ModalRoute.withName('/marketplace'));
+                  MaterialPageRoute(
+                      builder: (context) => ListarPersonas(false)));
             },
           ),
           ListTile(

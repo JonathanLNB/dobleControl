@@ -33,9 +33,9 @@ class _Principal extends State<Principal> {
   Widget build(BuildContext context) {
     clases.add(new Clase(
         null,
-        new Cliente("Jonathan", "San Isidro Culiacan", "12", "Culiacan", "555",
+        new Cliente("Jonathan", "San Isidro Culiacan", "12", "555",
             "55", "hoal@gmail.com"),
-        new Instructor("JP", "San Isidro Culiacan", "12", "Culiacan", "555",
+        new Instructor("JP", "San Isidro Culiacan", "12", "555",
             "55", "hoal@gmail.com", null),
         new Auto(1, "Automatico"),
         new Curso(1, "Curso 1"),
@@ -43,9 +43,9 @@ class _Principal extends State<Principal> {
         "11:20"));
     clases.add(new Clase(
         null,
-        new Cliente("Leonardo", "San Isidro Culiacan", "12", "Culiacan", "555",
+        new Cliente("Leonardo", "San Isidro Culiacan", "12", "555",
             "55", "hoal@gmail.com"),
-        new Instructor("JP", "San Isidro Culiacan", "12", "Culiacan", "555",
+        new Instructor("JP", "San Isidro Culiacan", "12", "555",
             "55", "hoal@gmail.com", null),
         new Auto(2, "Estandar"),
         new Curso(1, "Curso 2"),
@@ -53,9 +53,9 @@ class _Principal extends State<Principal> {
         "11:20"));
     clases.add(new Clase(
         null,
-        new Cliente("Pedro", "San Isidro Culiacan", "12", "Culiacan", "555",
+        new Cliente("Pedro", "San Isidro Culiacan", "12", "555",
             "55", "hoal@gmail.com"),
-        new Instructor("JP", "San Isidro Culiacan", "12", "Culiacan", "555",
+        new Instructor("JP", "San Isidro Culiacan", "12", "555",
             "55", "hoal@gmail.com", null),
         new Auto(3, "Dos"),
         new Curso(1, "Curso 3"),
@@ -98,7 +98,7 @@ class _Principal extends State<Principal> {
               child: new Align(
                 alignment: Alignment.topRight,
                 child: new FloatingActionButton(
-                  backgroundColor: AppColors.colorAccent,
+                  backgroundColor: AppColors.yellowDark,
                   onPressed: () {
                     _scaffoldKey.currentState.openDrawer();
                   },
@@ -106,7 +106,7 @@ class _Principal extends State<Principal> {
                   child: new Icon(
                     Icons.menu,
                     size: 25,
-                    color: AppColors.yellowDark,
+                    color: AppColors.colorAccent,
                   ),
                 ),
               ),
@@ -119,7 +119,7 @@ class _Principal extends State<Principal> {
                 alignment: Alignment.bottomRight,
                 child: new FloatingActionButton(
                   heroTag: "Calendario",
-                  backgroundColor: AppColors.colorAccent,
+                  backgroundColor: AppColors.yellowDark,
                   onPressed: () {
                     /*Navigator.push(
                     context,
@@ -135,7 +135,7 @@ class _Principal extends State<Principal> {
                   child: new Icon(
                     Icons.calendar_today,
                     size: 30,
-                    color: AppColors.yellowDark,
+                    color: AppColors.colorAccent,
                   ),
                 ),
               ),

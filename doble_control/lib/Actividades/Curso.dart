@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
@@ -10,15 +9,10 @@ import 'package:doble_control/TDA/Auto.dart';
 import 'package:doble_control/TDA/Cliente.dart';
 import 'package:doble_control/TDA/Curso.dart' as CursoTDA;
 import 'package:doble_control/TDA/Instructor.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 
-import 'LogIn.dart';
-import 'Principal.dart';
 
 class Curso extends StatefulWidget {
   Cliente cliente;
