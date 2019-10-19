@@ -1,15 +1,20 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:doble_control/API/ClienteM.dart';
+import 'package:doble_control/API/InstructorM.dart';
 import 'package:doble_control/Actividades/SingIn.dart';
-import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
 import 'package:doble_control/Adaptadores/ClienteAdapterL.dart';
 import 'package:doble_control/Adaptadores/InstructorAdapter.dart';
+import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
 import 'package:doble_control/TDA/Cliente.dart';
 import 'package:doble_control/TDA/Instructor.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
 class ListarPersonas extends StatefulWidget {
   bool instructor;
@@ -40,27 +45,7 @@ class _ListarPersonas extends State<ListarPersonas> {
       });
     });
     filtroE = false;
-    _instructores.add(new Instructor("JP", "San Isidro Culiacan", "12", "555",
-        "55", "hoal@gmail.com", null));
-    _instructores.add(new Instructor("MA", "San Isidro Culiacan", "12", "555",
-        "55", "hoal@gmail.com", null));
-    _instructores.add(new Instructor("PH", "San Isidro Culiacan", "12", "555",
-        "55", "hoal@gmail.com", null));
-    _clientes.add(new Cliente(
-        "Jonathan Leonardo Nieto Bustamante",
-        "San Isidro Culiacan",
-        "12",
-        "4111008552",
-        "55",
-        "jonathanleonardonb@gmail.com"));
-    _clientes.add(new Cliente(
-        "Pedro", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente(
-        "Mario", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente(
-        "Javier", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente(
-        "Walter", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
+    getData();
     super.initState();
   }
 
@@ -234,5 +219,77 @@ class _ListarPersonas extends State<ListarPersonas> {
                       color: AppColors.yellowDark),
                   textAlign: TextAlign.center,
                 ))));
+  }
+
+  _onLoading(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        ColorLoader3(
+          radius: 20,
+          dotRadius: 8,
+        )
+      ],
+    );
+  }
+
+  _getClientes() {
+    String server = "${Strings.server}clientes";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        ClienteM modelo = ClienteM.fromJson(jsonDecode(response.body));
+        modelo.clientes.sort((a, b) => a.nombre.compareTo(b.nombre));
+        setState(() {
+          _clientes = modelo.clientes;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  _getInstructores() {
+    String server = "${Strings.server}empleados";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        InstructorM modelo = InstructorM.fromJson(jsonDecode(response.body));
+        setState(() {
+          _instructores = modelo.instructores;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  getData() async {
+    /*showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _onLoading(context),
+    );*/
+
+    if (instructor)
+      await _getInstructores();
+    else
+      await _getClientes();
   }
 }

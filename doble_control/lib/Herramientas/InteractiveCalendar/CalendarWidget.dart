@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:doble_control/API/CalendarioM.dart';
 import 'package:doble_control/Actividades/ConsultarFecha.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarModel.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarPainter.dart';
@@ -8,7 +10,9 @@ import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 //En esta actividad hago el consumo web
 
@@ -17,13 +21,11 @@ double HEIGHT_TITLE_WEEKDAY = 24.0;
 double HEIGHT_TITLE_MONTH = 26.0;
 
 class InteractiveCalendar extends StatefulWidget {
-  List<List<Clase>> eventos;
-
-  InteractiveCalendar(this.eventos);
+  InteractiveCalendar();
 
   @override
   State<StatefulWidget> createState() {
-    return InteractiveCalendarState(eventos);
+    return InteractiveCalendarState();
   }
 }
 
@@ -43,14 +45,43 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   int meses = 0;
   bool _isLongPressed = false;
 
-  List<List<Clase>> eventos;
+  List<List<Clase>> eventos = new List<List<Clase>>();
 
-  InteractiveCalendarState(this.eventos);
+  InteractiveCalendarState();
 
-  @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
+  }
+
+  _getCalendario() {
+    /*String server =
+        "${Strings.server}clases/${DateTime.now().day}/${DateTime.now().month}";*/
+    String server = "${Strings.server}clases/${date.month - meses}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        CalendarioM modelo = CalendarioM.fromJson(jsonDecode(response.body));
+        setState(() {
+          eventos = modelo.clases;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  getData() async {
+    await _getCalendario();
   }
 
   @override
@@ -66,7 +97,8 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   }
 
   Widget buildBody(BuildContext context) {
-    int _diff = getDiferencia(true);
+    bool inicio = false;
+    int _diff = 0;
     _startDate = getStartDate();
     //Aqui ya conozco la fecha en la que se inicia la pintadera
     List<CalendarBase> cells = [];
@@ -80,8 +112,10 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
       DateTime _date = _startDate.add(Duration(days: i));
 
       CalendarEvent event = CalendarEvent.Disable(_date, []);
-      if (_date.month == _now.month) event = CalendarEvent.Enable(_date, []);
-
+      if (_date.month == _now.month) {
+        event = CalendarEvent.Enable(_date, []);
+        inicio = true;
+      }
       if (Utils.isEqual(_date, _dateSelected)) {
         event = CalendarEvent.Selection(_date, []);
         if (Utils.isEqual(_date, DateTime.now()))
@@ -90,31 +124,39 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
         if (Utils.isEqual(_date, DateTime.now()))
           event = CalendarEvent.Today(_date, []);
       }
-      if (i < _diff || i-_diff >= eventos.length)
+      if (inicio) {
+        if ((i - _diff) < eventos.length)
+          cells.add(event
+            ..events = eventos[i - _diff].length > 0
+                ? eventos[i - _diff]
+                : new List<Clase>());
+      } else
         cells.add(event..events = new List<Clase>());
-      else
-        cells.add(event..events = eventos[i - _diff]);
+      if (!inicio) _diff++;
     }
 
     return Stack(
       children: <Widget>[
-        Container(
-          child: ConstrainedBox(
-            child: Listener(
-                onPointerMove: (e) {
-                  if (this._isLongPressed) {
-                    //todo update long pressed
-                    setState(() {
-                      this._offset = this._offset - e.delta;
-                      _dateHover =
-                          getDateByOffset(e.position - _offset) ?? _dateHover;
-                    });
-                  }
-                },
-                onPointerUp: (e) {
-                  if (this._isLongPressed)
-                    setState(() {
-                      /*//todo stop long pressed
+        eventos.length == 0
+            ? Container()
+            : Container(
+                child: ConstrainedBox(
+                  child: Listener(
+                      onPointerMove: (e) {
+                        if (this._isLongPressed) {
+                          //todo update long pressed
+                          setState(() {
+                            this._offset = this._offset - e.delta;
+                            _dateHover =
+                                getDateByOffset(e.position - _offset) ??
+                                    _dateHover;
+                          });
+                        }
+                      },
+                      onPointerUp: (e) {
+                        if (this._isLongPressed)
+                          setState(() {
+                            /*//todo stop long pressed
                   this._isLongPressed = false;
                   //covert data from dateselected => datehover
                   int diffSelected = Duration(
@@ -137,33 +179,36 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
 
                   print('diffSelected: ' + diffSelected.toString());
                   print('diffHover: ' + diffHover.toString());*/
-                    });
-                },
-                child: GestureDetector(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 120),
-                    child: CustomPaint(
-                        painter: CalendarPainter(
-                            isLongPress: _isLongPressed,
-                            title: DateFormat('MM/yyyy').format(new DateTime(
-                                date.year, date.month - meses, date.day)),
-                            offset: _offset,
-                            zoom: _zoom,
-                            dateHover: _dateHover,
-                            widthCell: WIDTH_CELL,
-                            widthParent: WIDTH,
-                            values: cells,
-                            margin: MARGIN)),
-                  ),
-                  onLongPress: handleLongPress,
-                  onTap: handleTap,
-                  onTapDown: handleTapDown,
-                  onScaleStart: _isLongPressed ? null : handleScaleStart,
-                  onScaleUpdate: _isLongPressed ? null : handleScaleUpdate,
-                )),
-            constraints: BoxConstraints.expand(width: WIDTH, height: HEIGHT),
-          ),
-        ),
+                          });
+                      },
+                      child: GestureDetector(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 120),
+                          child: CustomPaint(
+                              painter: CalendarPainter(
+                                  isLongPress: _isLongPressed,
+                                  title: DateFormat('MM/yyyy').format(
+                                      new DateTime(date.year,
+                                          date.month - meses, date.day)),
+                                  offset: _offset,
+                                  zoom: _zoom,
+                                  dateHover: _dateHover,
+                                  widthCell: WIDTH_CELL,
+                                  widthParent: WIDTH,
+                                  values: cells,
+                                  margin: MARGIN)),
+                        ),
+                        onLongPress: handleLongPress,
+                        onTap: handleTap,
+                        onTapDown: handleTapDown,
+                        onScaleStart: _isLongPressed ? null : handleScaleStart,
+                        onScaleUpdate:
+                            _isLongPressed ? null : handleScaleUpdate,
+                      )),
+                  constraints:
+                      BoxConstraints.expand(width: WIDTH, height: HEIGHT),
+                ),
+              ),
         new Padding(
           padding: Platform.isAndroid
               ? EdgeInsets.only(left: 20, top: 115, right: 20)
@@ -176,6 +221,7 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
               onPressed: () {
                 setState(() {
                   meses -= 1;
+                  getData();
                 });
               },
               tooltip: Strings.proximoMes,
@@ -199,6 +245,7 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
               onPressed: () {
                 setState(() {
                   meses += 1;
+                  getData();
                 });
               },
               tooltip: Strings.proximoMes,
@@ -224,7 +271,9 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ConsultarDia(DateFormat('dd/MM/yyyy').format(_dateSelected), eventos[_dateSelected.day-1])));
+              builder: (context) => ConsultarDia(
+                  DateFormat('dd/MM/yyyy').format(_dateSelected),
+                  eventos[_dateSelected.day - 1])));
     }
   }
 
@@ -282,8 +331,9 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
     int _diff =
         (new DateTime(date.year, date.month - meses, date.day).day / 7).ceil() *
                 7 +
-            _weekday -
-            7;
+            _weekday;
+    print("Weekday: " + _weekday.toString());
+    print("Diferencia: " + _diff.toString());
     return weekday ? _weekday : _diff;
   }
 

@@ -1,22 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:doble_control/API/ClienteM.dart';
 import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
 import 'package:doble_control/TDA/Cliente.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 import 'Curso.dart';
-import 'LogIn.dart';
 import 'Principal.dart';
 
 class Alumnos extends StatefulWidget {
@@ -53,21 +50,6 @@ class _Alumnos extends State<Alumnos> {
 
   @override
   void initState() {
-    _clientes.add(new Cliente(
-        "Jonathan Leonardo Nieto Bustamante",
-        "San Isidro Culiacan",
-        "12",
-        "4111008552",
-        "55",
-        "jonathanleonardonb@gmail.com"));
-    _clientes.add(new Cliente(
-        "Pedro", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente(
-        "Mario", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente(
-        "Javier", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
-    _clientes.add(new Cliente(
-        "Walter", "San Isidro Culiacan", "12", "555", "55", "hoal@gmail.com"));
     horarios = Strings.iHorario;
     passwordVisible = true;
     nombresE = false;
@@ -77,6 +59,7 @@ class _Alumnos extends State<Alumnos> {
     numTelefonoE = false;
     edadE = false;
     correoE = false;
+    getData();
   }
 
   @override
@@ -140,12 +123,12 @@ class _Alumnos extends State<Alumnos> {
                                         //AQUI EL USUARIO
                                         if (validation()) {
                                           Cliente cliente = new Cliente(
-                                              nombresC.text,
-                                              domicilioC.text,
-                                              edadC.text,
-                                              numTelefonoC.text,
-                                              numCelularC.text,
-                                              correoC.text);
+                                              nombre: nombresC.text,
+                                              domicilio: domicilioC.text,
+                                              edad: int.parse(edadC.text),
+                                              telefono: numTelefonoC.text,
+                                              celular: numCelularC.text,
+                                              email: correoC.text);
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -571,6 +554,35 @@ class _Alumnos extends State<Alumnos> {
     );
   }
 
+  _getClientes() {
+    String server = "${Strings.server}clientes";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        ClienteM modelo = ClienteM.fromJson(jsonDecode(response.body));
+        modelo.clientes.sort((a, b) => a.nombre.compareTo(b.nombre));
+        setState(() {
+          _clientes = modelo.clientes;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  getData() async {
+
+    await _getClientes();
+  }
+
   Future goPrincipal() async {
     Navigator.pushAndRemoveUntil(
         context,
@@ -610,8 +622,7 @@ class _Alumnos extends State<Alumnos> {
       numCelularE = true;
     } else
       numCelularE = false;
-    if(!access)
-      Fluttertoast.showToast(msg: Strings.errorForm);
+    if (!access) Fluttertoast.showToast(msg: Strings.errorForm);
     return access;
   }
 }

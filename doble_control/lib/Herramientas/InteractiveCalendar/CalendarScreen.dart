@@ -1,45 +1,23 @@
 import 'dart:io';
-import 'dart:math';
-
-import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarModel.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarWidget.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
-import 'package:doble_control/TDA/Clase.dart';
 import 'package:flutter/material.dart';
 
+
 class CalendarScreen extends StatefulWidget {
-  List<Clase> clases = [];
-
-  CalendarScreen(this.clases);
-
   @override
   State<StatefulWidget> createState() {
-    return CalendarScreenState(clases);
+    return CalendarScreenState();
   }
 }
 
 class CalendarScreenState extends State<CalendarScreen> {
-  List<Clase> clases = [];
-  List<List<Clase>> events = [];
-
-  CalendarScreenState(this.clases);
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    for(int i = 0 ; i < 28 ; i ++)
-      events.add(randomClase());
-  }
-
-  List<Clase> randomClase() {
-    List<Clase> _list = [];
-    int length = Random().nextInt(1000) % 5;
-    for (int i = 0; i < length; i++)
-      _list.add(clases[Random().nextInt(1000) % clases.length]);
-    return _list;
   }
 
   @override
@@ -110,6 +88,6 @@ class CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget buildContent() {
-    return InteractiveCalendar(events);
+    return InteractiveCalendar();
   }
 }

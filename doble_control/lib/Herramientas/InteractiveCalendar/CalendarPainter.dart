@@ -254,9 +254,9 @@ class CalendarPainter extends CustomPainter {
 
         List<CellEvent> _list =
             (data[i]['value'].events as List<Clase>).map((Clase e) {
-          Color background = e.auto.idAuto == 1
+          Color background = e.idtipoauto == 1
               ? AppColors.pink
-              : (e.auto.idAuto == 2 ? AppColors.blue : AppColors.green);
+              : (e.idtipoauto == 2 ? AppColors.blue : AppColors.green);
 
           return CellEvent(
               background: background.withOpacity(
@@ -264,7 +264,7 @@ class CalendarPainter extends CustomPainter {
               textColor: Colors.white.withOpacity(
                   _base.type == ECalendarCellType.Disable ? 0.2 : 1.0),
               textSize: type == ECalendarZoomType.Medium ? 12.0 : 14.0,
-              text: e.cliente.nombre + " " + e.horaInicio + " - " + e.horaFin);
+              text: e.instructor.nombre+"-"+e.horario+": "+e.cliente.nombre);
         }).toList();
 
         if (type == ECalendarZoomType.Small)

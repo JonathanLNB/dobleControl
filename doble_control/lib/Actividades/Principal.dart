@@ -1,20 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:doble_control/Actividades/Calendario.dart';
+import 'package:doble_control/API/ClaseM.dart';
 import 'package:doble_control/Adaptadores/ClaseAdapter.dart';
-import 'package:doble_control/Dialogos/AdminDialog.dart';
 import 'package:doble_control/Herramientas/DobleControlDrawer.dart';
 import 'package:doble_control/Herramientas/InteractiveCalendar/CalendarScreen.dart';
+import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
 import 'package:doble_control/TDA/Clase.dart';
-import 'package:doble_control/TDA/Instructor.dart';
-import 'package:doble_control/TDA/Curso.dart';
-import 'package:doble_control/TDA/Auto.dart';
-import 'package:doble_control/TDA/Cliente.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 
 class Principal extends StatefulWidget {
@@ -28,39 +27,16 @@ class Principal extends StatefulWidget {
 class _Principal extends State<Principal> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<Clase> clases = [];
+  int idDia, idMes;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    clases.add(new Clase(
-        null,
-        new Cliente("Jonathan", "San Isidro Culiacan", "12", "555",
-            "55", "hoal@gmail.com"),
-        new Instructor("JP", "San Isidro Culiacan", "12", "555",
-            "55", "hoal@gmail.com", null),
-        new Auto(1, "Automatico"),
-        new Curso(1, "Curso 1"),
-        "10:20",
-        "11:20"));
-    clases.add(new Clase(
-        null,
-        new Cliente("Leonardo", "San Isidro Culiacan", "12", "555",
-            "55", "hoal@gmail.com"),
-        new Instructor("JP", "San Isidro Culiacan", "12", "555",
-            "55", "hoal@gmail.com", null),
-        new Auto(2, "Estandar"),
-        new Curso(1, "Curso 2"),
-        "10:20",
-        "11:20"));
-    clases.add(new Clase(
-        null,
-        new Cliente("Pedro", "San Isidro Culiacan", "12", "555",
-            "55", "hoal@gmail.com"),
-        new Instructor("JP", "San Isidro Culiacan", "12", "555",
-            "55", "hoal@gmail.com", null),
-        new Auto(3, "Dos"),
-        new Curso(1, "Curso 3"),
-        "10:20",
-        "11:20"));
     return Scaffold(
       drawerDragStartBehavior: DragStartBehavior.down,
       key: _scaffoldKey,
@@ -128,7 +104,7 @@ class _Principal extends State<Principal> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => CalendarScreen(clases)),
+                          builder: (context) => CalendarScreen()),
                     );
                   },
                   tooltip: Strings.calendario,
@@ -206,40 +182,81 @@ class _Principal extends State<Principal> {
     showDialog(
         context: context,
         builder: (_) => AssetGiffyDialog(
-          image: Image.asset('assets/images/cerrar.gif', fit: BoxFit.cover),
-          title: Text(
-            Strings.salir,
-            style: TextStyle(
-                fontSize: 22,
-                fontFamily: "GoogleSans",
-                fontWeight: FontWeight.bold,
-                color: AppColors.yellowDark),
-          ),
-          description: Text(
-            Strings.salirInfo,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 15,
-                fontFamily: "GoogleSans",
-                color: AppColors.yellowDark),
-          ),
-          buttonCancelText: Text(
-            Strings.cancelar,
-            style: TextStyle(fontFamily: "GoogleSans", color: Colors.white),
-          ),
-          buttonOkText: Text(
-            Strings.aceptar,
-            style: TextStyle(fontFamily: "GoogleSans", color: Colors.white),
-          ),
-          onOkButtonPressed: () {
-            Platform.isAndroid ? SystemNavigator.pop() : exit(0);
+              image: Image.asset('assets/images/cerrar.gif', fit: BoxFit.cover),
+              title: Text(
+                Strings.salir,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontFamily: "GoogleSans",
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.yellowDark),
+              ),
+              description: Text(
+                Strings.salirInfo,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: "GoogleSans",
+                    color: AppColors.yellowDark),
+              ),
+              buttonCancelText: Text(
+                Strings.cancelar,
+                style: TextStyle(fontFamily: "GoogleSans", color: Colors.white),
+              ),
+              buttonOkText: Text(
+                Strings.aceptar,
+                style: TextStyle(fontFamily: "GoogleSans", color: Colors.white),
+              ),
+              onOkButtonPressed: () {
+                Platform.isAndroid ? SystemNavigator.pop() : exit(0);
+              },
+            ));
+  }
+
+  _getClases() {
+    /*String server =
+        "${Strings.server}clases/${DateTime.now().day}/${DateTime.now().month}";*/
+    String server =
+        "${Strings.server}clases/${1}/${1}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
           },
-        ));
+        );
+        //Navigator.pop(context);
+        ClaseM modelo = ClaseM.fromJson(jsonDecode(response.body));
+        setState(() {
+          clases = modelo.clases;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  _onLoading(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        ColorLoader3(
+          radius: 20,
+          dotRadius: 8,
+        )
+      ],
+    );
+  }
+
+  getData() async {
+    await _getClases();
   }
 
   Future<bool> onBackPress() {
     salir(context);
     return Future.value(false);
   }
-
 }

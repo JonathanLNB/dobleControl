@@ -91,7 +91,7 @@ class ClaseAdapter extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                         child: Text(
-                          clase.horaInicio + " - " + clase.horaFin,
+                          clase.horario,
                           style: TextStyle(
                               color: AppColors.red,
                               fontSize: 16.0,
@@ -100,12 +100,12 @@ class ClaseAdapter extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 30),
+                        padding: EdgeInsets.only(left: 10),
                       ),
                       Container(
                         margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                         child: Text(
-                          clase.curso.curso,
+                          clase.curso,
                           style: TextStyle(
                               color: AppColors.yellowDark,
                               fontSize: 16.0,
@@ -125,9 +125,9 @@ class ClaseAdapter extends StatelessWidget {
                           color: Colors.transparent,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: clase.auto.idAuto == 1
+                              image: clase.idtipoauto == 1
                                   ? AssetImage("assets/images/automatico.png")
-                                  : clase.auto.idAuto == 2
+                                  : clase.idtipoauto == 2
                                       ? AssetImage("assets/images/estandar.png")
                                       : AssetImage("assets/images/ambos.png")),
                         ),

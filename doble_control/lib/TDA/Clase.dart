@@ -1,18 +1,46 @@
-import 'package:doble_control/TDA/Auto.dart';
-import 'package:doble_control/TDA/Cliente.dart';
-import 'package:doble_control/TDA/Curso.dart';
-import 'package:doble_control/TDA/Dia.dart';
-import 'package:doble_control/TDA/Instructor.dart';
+import 'Cliente.dart';
+import 'Instructor.dart';
 
 class Clase {
-  List<Dia> dias;
-  Cliente cliente;
+  int idcalendario;
   Instructor instructor;
-  Auto auto;
-  Curso curso;
-  String horaInicio;
-  String horaFin;
+  Cliente cliente;
+  String horario;
+  int idtipoauto;
+  String curso;
 
-  Clase(this.dias, this.cliente, this.instructor, this.auto, this.curso,
-      this.horaInicio, this.horaFin);
+  Clase(
+      {this.idcalendario,
+        this.instructor,
+        this.cliente,
+        this.horario,
+        this.idtipoauto,
+        this.curso});
+
+  Clase.fromJson(Map<String, dynamic> json) {
+    idcalendario = json['idcalendario'];
+    instructor = json['instructor'] != null
+        ? new Instructor.fromJson(json['instructor'])
+        : null;
+    cliente =
+    json['cliente'] != null ? new Cliente.fromJson(json['cliente']) : null;
+    horario = json['horario'];
+    idtipoauto = json['idtipoauto'];
+    curso = json['curso'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['idcalendario'] = this.idcalendario;
+    if (this.instructor != null) {
+      data['instructor'] = this.instructor.toJson();
+    }
+    if (this.cliente != null) {
+      data['cliente'] = this.cliente.toJson();
+    }
+    data['horario'] = this.horario;
+    data['idtipoauto'] = this.idtipoauto;
+    data['curso'] = this.curso;
+    return data;
+  }
 }
