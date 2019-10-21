@@ -1,18 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:doble_control/API/HorarioM.dart';
+import 'package:doble_control/API/InstructorM.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
 import 'package:doble_control/TDA/Auto.dart';
 import 'package:doble_control/TDA/Cliente.dart';
+import 'package:doble_control/TDA/Horario.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:doble_control/TDA/Curso.dart' as CursoTDA;
 import 'package:doble_control/TDA/Instructor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 
 class Curso extends StatefulWidget {
   Cliente cliente;
@@ -31,7 +35,7 @@ class _Curso extends State<Curso> {
   List<CursoTDA.Curso> _cursos = new List<CursoTDA.Curso>();
   List<Instructor> _instructores = new List<Instructor>();
   List<Auto> _autos = new List<Auto>();
-  List<String> _horarios = new List<String>();
+  List<Horario> _horarios = new List<Horario>();
   List<String> _fechas = [
     Strings.iFecha,
     Strings.iFecha,
@@ -46,9 +50,12 @@ class _Curso extends State<Curso> {
   ];
   TextEditingController fechaIC = new TextEditingController();
   TextEditingController fechaFC = new TextEditingController();
-
+  Instructor _instructor;
+  Horario _horario;
+  CursoTDA.Curso _curso;
+  Auto _auto;
   String instructor, horario, curso, auto;
-  int _instructor, _horario, _curso, _auto;
+
   bool fechaIE, fechaFE, especial;
 
   _Curso(this.cliente);
@@ -56,11 +63,8 @@ class _Curso extends State<Curso> {
   @override
   void initState() {
     instructor = Strings.iInstructor;
-    _instructor = 0;
     horario = Strings.iHorario2;
-    _horario = 0;
     curso = Strings.iCurso;
-    _curso = 0;
     auto = Strings.auto;
     fechaIE = false;
     fechaFE = false;
@@ -302,7 +306,7 @@ class _Curso extends State<Curso> {
             onPressed: () {
               setState(() {
                 instructor = _instructores[index].nombre;
-                _instructor = index;
+                _instructor = _instructores[index];
               });
               Navigator.pop(context);
             },
@@ -378,7 +382,7 @@ class _Curso extends State<Curso> {
         itemBuilder: (context, index) {
           return new SimpleDialogOption(
             child: Text(
-              _horarios[index],
+              _horarios[index].horario,
               style: TextStyle(
                   fontSize: 15,
                   fontFamily: "GoogleSans",
@@ -388,8 +392,8 @@ class _Curso extends State<Curso> {
             ),
             onPressed: () {
               setState(() {
-                horario = _horarios[index];
-                _horario = index;
+                horario = _horarios[index].horario;
+                _horario = _horarios[index];
               });
               Navigator.pop(context);
             },
@@ -476,7 +480,7 @@ class _Curso extends State<Curso> {
             onPressed: () {
               setState(() {
                 curso = _cursos[index].curso;
-                _curso = index;
+                _curso = _cursos[index];
               });
               Navigator.pop(context);
             },
@@ -563,7 +567,7 @@ class _Curso extends State<Curso> {
             onPressed: () {
               setState(() {
                 auto = _autos[index].descripcion;
-                _auto = index;
+                _auto = _autos[index];
               });
               Navigator.pop(context);
             },
@@ -676,6 +680,77 @@ class _Curso extends State<Curso> {
       itemCount: _fechas.length,
       shrinkWrap: true,
     );
+  }
+
+  _getInstructores() {
+    String server = "${Strings.server}empleados";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        InstructorM modelo =
+            new InstructorM.fromJson(jsonDecode(response.body));
+        setState(() {
+          _instructores = modelo.instructores;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  _getHorarios() {
+    String server = "${Strings.server}horarios/${_instructor}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        HorarioM modelo = new HorarioM.fromJson(jsonDecode(response.body));
+        setState(() {
+          _horarios = modelo.horarios;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  _getFechas() {
+    String server =
+        "${Strings.server}horarios/${_horario.idhorario}/${_auto.idAuto}/${DateTime.now().month}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        HorarioM modelo = new HorarioM.fromJson(jsonDecode(response.body));
+        setState(() {
+          _horarios = modelo.horarios;
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
   }
 
   _onLoading(BuildContext context) {

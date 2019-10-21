@@ -2,14 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:doble_control/Herramientas/Progress.dart';
+import 'package:doble_control/Herramientas/ShowDialog.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
+import 'package:doble_control/TDA/Horario.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 import 'LogIn.dart';
@@ -47,7 +49,9 @@ class _SignIn extends State<SignIn> {
   TextEditingController domicilioC = new TextEditingController();
   TextEditingController edadC = new TextEditingController();
   List<String> _dias, horaI, horaF;
-  String foto, dias, horarios;
+  List<dynamic> horarios;
+  List<Horario> _horarios;
+  String foto, dias, horario;
   int password, idUser;
   bool passwordVisible,
       nombresE,
@@ -56,8 +60,7 @@ class _SignIn extends State<SignIn> {
       numTelefonoE,
       numCelularE,
       domicilioE,
-      edadE,
-      horario;
+      edadE;
 
   _SignIn(this.password);
 
@@ -66,9 +69,10 @@ class _SignIn extends State<SignIn> {
     _dias = new List<String>();
     horaI = new List<String>();
     horaF = new List<String>();
+    horarios = new List<dynamic>();
+    _horarios = new List<Horario>();
     dias = Strings.iDias;
-    horarios = Strings.iHorario;
-    horario = false;
+    horario = Strings.iHorario;
     passwordVisible = true;
     nombresE = false;
     correoE = false;
@@ -150,11 +154,11 @@ class _SignIn extends State<SignIn> {
                             ),
                             getTitulo(context, Strings.numCelular),
                             getNumCelular(context),
-                            Padding(
+                            /*Padding(
                               padding: EdgeInsets.all(10),
                             ),
                             getTitulo(context, Strings.diasT),
-                            getDias(context),
+                            getDias(context),*/
                             Padding(
                               padding: EdgeInsets.all(10),
                             ),
@@ -165,7 +169,7 @@ class _SignIn extends State<SignIn> {
                             ),
                             getTitulo(context, Strings.correo),
                             getCorreo(context),
-                            Padding(
+                            /* Padding(
                               padding: EdgeInsets.all(10),
                             ),
                             password == 1
@@ -174,7 +178,7 @@ class _SignIn extends State<SignIn> {
                             password == 1 ? getPassword(context) : Container(),
                             Padding(
                               padding: EdgeInsets.all(10),
-                            ),
+                            ),*/
                             Padding(
                               padding: EdgeInsets.all(10),
                               child: new RaisedButton(
@@ -212,26 +216,98 @@ class _SignIn extends State<SignIn> {
     );
   }
 
-  Future _selectTime() async {
-    TimeOfDay picked = await showTimePicker(
+  _showHorarios(BuildContext context) async {
+    ListView getLista(BuildContext context) {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          bool elegido = false;
+          _horarios.forEach((aux) {
+            if (aux.horario == horarios[index]["horario"]) {
+              elegido = true;
+            }
+          });
+          return Container(
+            child: CheckboxListTile(
+                title: Text(
+                  horarios[index]["horario"],
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontFamily: "GoogleSans",
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.green),
+                ),
+                value: elegido,
+                onChanged: (bool value) {
+                  setState(() {
+                    elegido = !elegido;
+                  });
+                  if (elegido) {
+                    setState(() {
+                      _horarios.add(new Horario(
+                          idhorario: horarios[index]["idhorario"],
+                          horario: horarios[index]["horario"]));
+                    });
+                  } else {
+                    if (_horarios.length > 1)
+                      for (int i = 0; i < _horarios.length; i++) {
+                        if (_horarios[i].horario ==
+                            horarios[index]["horario"]) {
+                          setState(() {
+                            _horarios.removeWhere((Horario horario) =>
+                                horario.horario == _horarios[i].horario);
+                            return;
+                          });
+                        }
+                      }
+                    else
+                      _horarios.removeLast();
+                  }
+                  setState(() {
+                    if (_horarios.length > 0) {
+                      _horarios
+                          .sort((a, b) => a.idhorario.compareTo(b.idhorario));
+                      horario = "";
+                      _horarios.asMap().forEach((index, hora) {
+                        horario += "${hora}";
+                        if (index != _horarios.length - 1) horario += "\n";
+                      });
+                    } else
+                      horario = Strings.iHorario;
+                  });
+                  print("Lista: $_horarios");
+                  Navigator.pop(context);
+                  _showHorarios(context);
+                }),
+          );
+        },
+        scrollDirection: Axis.vertical,
+        itemCount: horarios.length,
+        addAutomaticKeepAlives: true,
+      );
+    }
+
+    ShowDialog dialog = ShowDialog(
+        title: Text(
+          Strings.iHorario,
+          style: TextStyle(
+              fontSize: 18,
+              fontFamily: "GoogleSans",
+              fontWeight: FontWeight.bold,
+              color: AppColors.black),
+          textAlign: TextAlign.center,
+        ),
+        content: Container(
+          height: 400,
+          child: getLista(context),
+        ));
+
+    showDialog(
       context: context,
-      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context) {
+        return dialog;
+      },
     );
-    if (picked != null)
-      setState(() {
-        if (horario) {
-          horaF.add(picked.format(context));
-          horarios = "";
-          for (int i = 0; i < horaF.length; i++) {
-            horarios += "${horaI[i]} - ${horaF[i]}";
-            if (i < horaF.length - 1) horarios += "\n";
-          }
-        } else {
-          horaI.add(picked.format(context));
-          _selectTime();
-        }
-        horario = !horario;
-      });
   }
 
   Widget getTitulo(BuildContext context, String titulo) {
@@ -265,7 +341,7 @@ class _SignIn extends State<SignIn> {
               padding:
                   EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
-                horarios,
+                horario,
                 style: TextStyle(
                     fontFamily: "GoogleSans",
                     color: AppColors.black,
@@ -277,7 +353,7 @@ class _SignIn extends State<SignIn> {
         ),
       ),
       onTap: () {
-        _selectTime();
+        _showHorarios(context);
       },
     );
   }
@@ -638,7 +714,7 @@ class _SignIn extends State<SignIn> {
   }
 
   void registerUser() {
-    /*if (validation()) RegisterAPI();*/
+    if (validation()) RegisterAPI();
   }
 
   void goLogIn() {
@@ -660,14 +736,14 @@ class _SignIn extends State<SignIn> {
       correoE = true;
     } else
       correoE = false;
-    if (password == 1) {
+    /*if (password == 1) {
       if (passwordC.text.length == 0) {
         access = false;
         passwordE = true;
       } else
         passwordE = false;
     } else
-      passwordC.text = "Soc1al";
+      passwordC.text = "Soc1al";*/
     return access;
   }
 
@@ -675,9 +751,9 @@ class _SignIn extends State<SignIn> {
     return await _auth.currentUser();
   }
 
-  Future<void> registerUserFirebase(BuildContext context) async {
+  /*Future<void> registerUserFirebase(BuildContext context) async {
     user = (await _auth.createUserWithEmailAndPassword(
-            email: correoC.text, password: passwordC.text))
+        email: correoC.text, password: passwordC.text))
         .user;
     if (!user.isEmailVerified) {
       userUpdate.displayName = nombresC.text;
@@ -690,67 +766,28 @@ class _SignIn extends State<SignIn> {
         }
       });
     }
-  }
+  }*/
 
-  /*void RegisterAPI() {
-    String server = "${Strings.server}users";
+  void RegisterAPI() {
+    String server = "${Strings.server}empleados";
     Future<String> getData() async {
       try {
         http.Response response;
-        if (password != 2) {
-          response = await http.post(Uri.encodeFull(server),
-              headers: {"content-type": "application/json"},
-              body: jsonEncode({
-                "username": userC.text,
-                "name": nombresC.text,
-                "lastname": apellidosC.text,
-                "email": correoC.text,
-                "password": "Ema1lPas5",
-                "profile_img": image,
-                "birthday": fechaN,
-                "birthplace": "",
-                "gender_id": generoC,
-                "role_id": 1
-              }));
-        } else {
-          print("${server}/$idUser");
-          response = await http.put(Uri.encodeFull("${server}/$idUser"),
-              headers: {
-                "content-type": "application/json",
-                'Authorization': 'Bearer $token'
-              },
-              body: jsonEncode({
-                "username": userC.text,
-                "name": nombresC.text,
-                "lastname": apellidosC.text,
-                "profile_img": image,
-                "birthday": fechaN,
-                "birthplace": "",
-                "gender_id": generoC,
-                "role_id": 1
-              }));
-        }
-        Navigator.pop(context);
-        print(response.body);
+        response = await http.post(Uri.encodeFull(server),
+            headers: {"content-type": "application/json"},
+            body: jsonEncode({
+              "nombre": nombresC.text,
+              "domicilio": domicilioC.text,
+              "email": correoC.text,
+              "telefono": numTelefonoC.text,
+              "celular": numCelularC.text,
+              "edad": edadC.text,
+            }));
         Map<String, dynamic> data = jsonDecode(response.body);
-        if (data["error"] != null) {
-          Fluttertoast.showToast(msg: data["error"]);
-        } else {
-          Registro dataM = new Registro.fromJson(data);
-          if (password == 1)
-            registerUserFirebase(context);
-          else {
-            await info.setIdUser(dataM.id);
-            await info.setNombre(nombresC.text);
-            await info.setUsername(userC.text);
-            await info.setApellidos(apellidosC.text);
-            await info.setGenero("$generoC");
-            await info.setRol("1");
-            await info.setAPIToken(dataM.apiToken);
-            print("Token: ${await info.getAPIToken()}");
-            goPrincipal();
-          }
-        }
+        if (data["valid"] == 1)
+          agregarHorarios(data["idInstructor"]);
+        else
+          Fluttertoast.showToast(msg: Strings.errorS);
       } catch (e) {
         Fluttertoast.showToast(msg: Strings.errorS);
       }
@@ -758,7 +795,10 @@ class _SignIn extends State<SignIn> {
 
     getData();
   }
-  */
+
+  _getHorarios() {
+    horarios = jsonDecode(Strings.horarios);
+  }
 
   _showDays(BuildContext context) async {
     ListView getLista(BuildContext context) {
@@ -879,7 +919,6 @@ class _SignIn extends State<SignIn> {
   }
 
   Future config() async {
-    //await info.inicializar();
     getUser().then((user) {
       if (user != null) {
         setState(() {
@@ -896,5 +935,40 @@ class _SignIn extends State<SignIn> {
         });
       }
     });
+    await _getHorarios();
+  }
+
+  void agregarHorarios(idInstructor) {
+    String server = "${Strings.server}empleados/horarios";
+    String horario = "";
+    _horarios.asMap().forEach((index, hora) {
+      horario += "${hora.idhorario}";
+      if (index != _horarios.length - 1) horario += ",";
+    });
+    Future<String> getData() async {
+      try {
+        http.Response response;
+        response = await http.post(Uri.encodeFull(server),
+            headers: {"content-type": "application/json"},
+            body: jsonEncode({
+              "idinstructor": idInstructor,
+              "horarios": horario,
+            }));
+
+        Navigator.pop(context);
+        print(response.body);
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data["valid"] != 1)
+          Fluttertoast.showToast(msg: Strings.errorS);
+        else {
+          goLogIn();
+          Fluttertoast.showToast(msg: Strings.agregadorC);
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
   }
 }

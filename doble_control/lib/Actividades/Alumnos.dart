@@ -25,6 +25,7 @@ class Alumnos extends StatefulWidget {
 }
 
 class _Alumnos extends State<Alumnos> {
+  Cliente cliente;
   TextEditingController filtroC = new TextEditingController();
   TextEditingController nombresC = new TextEditingController();
   TextEditingController correoC = new TextEditingController();
@@ -35,7 +36,7 @@ class _Alumnos extends State<Alumnos> {
   List<String> _dias, horaI, horaF;
   List<Cliente> _clientes = new List<Cliente>();
   String dias, horarios;
-  int idUser;
+  int idCliente;
   bool passwordVisible,
       nombresE,
       correoE,
@@ -115,26 +116,17 @@ class _Alumnos extends State<Alumnos> {
                                     padding: EdgeInsets.all(10),
                                     child: new RaisedButton(
                                       onPressed: () {
-                                        /*showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (context) => _onLoading(context),
-                                  );*/
-                                        //AQUI EL USUARIO
                                         if (validation()) {
-                                          Cliente cliente = new Cliente(
-                                              nombre: nombresC.text,
-                                              domicilio: domicilioC.text,
-                                              edad: int.parse(edadC.text),
-                                              telefono: numTelefonoC.text,
-                                              celular: numCelularC.text,
-                                              email: correoC.text);
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Curso(cliente)),
-                                          );
+                                          if (cliente == null) {
+                                            showDialog(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (context) =>
+                                                  _onLoading(context),
+                                            );
+                                            RegisterAPI();
+                                          } else
+                                            createCurso();
                                         }
                                       },
                                       child: Text(
@@ -579,7 +571,6 @@ class _Alumnos extends State<Alumnos> {
   }
 
   getData() async {
-
     await _getClientes();
   }
 
@@ -624,5 +615,50 @@ class _Alumnos extends State<Alumnos> {
       numCelularE = false;
     if (!access) Fluttertoast.showToast(msg: Strings.errorForm);
     return access;
+  }
+
+  void RegisterAPI() {
+    String server = "${Strings.server}clientes";
+    Future<String> getData() async {
+      try {
+        http.Response response;
+        response = await http.post(Uri.encodeFull(server),
+            headers: {"content-type": "application/json"},
+            body: jsonEncode({
+              "nombre": nombresC.text,
+              "domicilio": domicilioC.text,
+              "email": correoC.text,
+              "telefono": numTelefonoC.text,
+              "celular": numCelularC.text,
+              "edad": edadC.text,
+            }));
+        Map<String, dynamic> data = jsonDecode(response.body);
+        Navigator.pop(context);
+        if (data["valid"] == 1) {
+          idCliente = data["idCliente"];
+          createCurso();
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  void createCurso() {
+    cliente = new Cliente(
+        idcliente: idCliente,
+        nombre: nombresC.text,
+        domicilio: domicilioC.text,
+        edad: int.parse(edadC.text),
+        telefono: numTelefonoC.text,
+        celular: numCelularC.text,
+        email: correoC.text);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Curso(cliente)),
+    );
   }
 }

@@ -77,7 +77,7 @@ class Strings {
   static String iFecha = "Ingresar fecha";
   static String fecha = "Fecha";
   static String nuevoInstructor = "Nuevo Instructor";
-  static String server = "http://192.168.1.68:3000/api/";
+  static String server = "http://192.168.1.69:3000/api/";
   static String errorForm = "No has completado todo el formulario 😱";
   static String verificacionInfo =
       "Enviamos un e-mail de verificación al correo electrónico. Ingresa, verifica la cuenta y vuelve para disfrutar de los beneficios de Doble Control.";
@@ -92,7 +92,8 @@ class Strings {
     "Sábado",
     "Domingo",
   ];
+  static String horarios =
+      '[{"idhorario": 1, "horario":"8:00 - 9:00"},{"idhorario": 2, "horario":"9:00 - 10:00"},{"idhorario": 3, "horario":"10:00 - 11:00"},{"idhorario": 4, "horario":"11:00 - 12:00"},{"idhorario": 5, "horario":"12:00 - 13:00"},{"idhorario": 6, "horario":"13:00 - 14:00"},{"idhorario": 7, "horario":"14:00 - 15:00"},{"idhorario": 8, "horario":"15:00 - 16:00"},{"idhorario": 9, "horario":"16:00 - 17:00"},{"idhorario": 10, "horario":"17:00 - 18:00"},{"idhorario": 11, "horario":"18:00 - 19:00"},{"idhorario": 12, "horario":"19:00 - 20:00"},{"idhorario": 13, "horario":"20:00 - 21:00"}]';
 
-
-
+  static String agregadorC = "Instructor agregadó correctamente";
 }
