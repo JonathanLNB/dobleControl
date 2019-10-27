@@ -40,7 +40,7 @@ class Strings {
   static String resetPassword = "Recuperar contraseña";
   static String resetPasswordInfo =
       "Enviamos un e-mail de recuperación a tu correo electrónico. Ingresa, verifica tu cuenta y vuelve para disfrutar de los beneficios de Doble Control.";
-  static String salir = "Salir de PescaData";
+  static String salir = "Salir de Doble Control";
   static String salirInfo = "¿Estás seguro de salir de la aplicación?";
   static String errorLogIn = "Error al iniciar iniciar sesión";
   static String errorLogInS =
@@ -92,8 +92,31 @@ class Strings {
     "Sábado",
     "Domingo",
   ];
+  static List<String> meses = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
   static String horarios =
       '[{"idhorario": 1, "horario":"8:00 - 9:00"},{"idhorario": 2, "horario":"9:00 - 10:00"},{"idhorario": 3, "horario":"10:00 - 11:00"},{"idhorario": 4, "horario":"11:00 - 12:00"},{"idhorario": 5, "horario":"12:00 - 13:00"},{"idhorario": 6, "horario":"13:00 - 14:00"},{"idhorario": 7, "horario":"14:00 - 15:00"},{"idhorario": 8, "horario":"15:00 - 16:00"},{"idhorario": 9, "horario":"16:00 - 17:00"},{"idhorario": 10, "horario":"17:00 - 18:00"},{"idhorario": 11, "horario":"18:00 - 19:00"},{"idhorario": 12, "horario":"19:00 - 20:00"},{"idhorario": 13, "horario":"20:00 - 21:00"}]';
-
+  static String autos =
+      '[{"idtipoauto": 1, "tipoauto":"Estandar"},{"idtipoauto": 2, "tipoauto":"Automatico"},{"idtipoauto": 3, "tipoauto":"Ambos"}]';
+  static String cursos =
+      '[{"idcurso": 1, "curso":"Ciudad (Curso 1)"},{"idcurso": 2, "curso":"Carretera (Curso 2)"},{"idcurso": 3, "curso":"Fin de Semana"}]';
   static String agregadorC = "Instructor agregadó correctamente";
+  static String alumnoupdate = "Actualizar Alumno";
+  static String alumnoDelete = "¡Alumno Eliminadó Correctamente!";
+  static String eliminarAlumno = "Eliminar Alumno";
+  static String instructorDelete = "¡Instructor Eliminadó Correctamente!";
+  static String eliminarInstructor = "Eliminar Instructor";
+  static String agendar = "Agendar";
 }

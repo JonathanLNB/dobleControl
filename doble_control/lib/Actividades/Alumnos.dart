@@ -17,10 +17,16 @@ import 'Curso.dart';
 import 'Principal.dart';
 
 class Alumnos extends StatefulWidget {
+  Cliente cliente;
+
+  Alumnos();
+
+  Alumnos.update(this.cliente);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return new _Alumnos();
+    return cliente == null ? new _Alumnos() : new _Alumnos.update(cliente);
   }
 }
 
@@ -45,9 +51,15 @@ class _Alumnos extends State<Alumnos> {
       domicilioE,
       edadE,
       filtroE,
+      update = false,
       antiguo = false;
 
   _Alumnos();
+
+  _Alumnos.update(this.cliente) {
+    antiguo = true;
+    update = true;
+  }
 
   @override
   void initState() {
@@ -61,6 +73,7 @@ class _Alumnos extends State<Alumnos> {
     edadE = false;
     correoE = false;
     getData();
+    if (update) llenarDatos();
   }
 
   @override
@@ -85,26 +98,30 @@ class _Alumnos extends State<Alumnos> {
                         margin: EdgeInsets.all(10),
                         child: Column(
                           children: <Widget>[
-                            getTitulo(context, Strings.alumnonuevo),
-                            Transform.scale(
-                              scale: 2.0,
-                              child: new Switch(
-                                value: antiguo,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    antiguo = value;
-                                  });
-                                },
-                                activeColor: AppColors.green,
-                                activeTrackColor: AppColors.green,
-                                activeThumbImage:
-                                    AssetImage('assets/images/check.png'),
-                                inactiveTrackColor: AppColors.red,
-                                inactiveThumbColor: AppColors.red,
-                                inactiveThumbImage:
-                                    AssetImage('assets/images/close.png'),
-                              ),
-                            ),
+                            cliente == null
+                                ? getTitulo(context, Strings.alumnonuevo)
+                                : Container(),
+                            cliente == null
+                                ? Transform.scale(
+                                    scale: 2.0,
+                                    child: new Switch(
+                                      value: antiguo,
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          antiguo = value;
+                                        });
+                                      },
+                                      activeColor: AppColors.green,
+                                      activeTrackColor: AppColors.green,
+                                      activeThumbImage:
+                                          AssetImage('assets/images/check.png'),
+                                      inactiveTrackColor: AppColors.red,
+                                      inactiveThumbColor: AppColors.red,
+                                      inactiveThumbImage:
+                                          AssetImage('assets/images/close.png'),
+                                    ),
+                                  )
+                                : Container(),
                             Padding(
                               padding: EdgeInsets.all(8),
                             ),
@@ -125,12 +142,14 @@ class _Alumnos extends State<Alumnos> {
                                                   _onLoading(context),
                                             );
                                             RegisterAPI();
-                                          } else
+                                          } else if (update)
+                                            updateAPI();
+                                          else
                                             createCurso();
                                         }
                                       },
                                       child: Text(
-                                        Strings.siguiente,
+                                        update?Strings.actualizar:Strings.siguiente,
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontFamily: "GoogleSans",
@@ -156,7 +175,7 @@ class _Alumnos extends State<Alumnos> {
               ? EdgeInsets.only(left: 15, top: 40, right: 10)
               : EdgeInsets.only(left: 15, top: 50, right: 10),
           child: Text(
-            Strings.nuevoCurso,
+            cliente == null ? Strings.nuevoCurso : Strings.alumnoupdate,
             style: TextStyle(
                 color: AppColors.colorAccent,
                 fontSize: 30.0,
@@ -660,5 +679,43 @@ class _Alumnos extends State<Alumnos> {
       context,
       MaterialPageRoute(builder: (context) => Curso(cliente)),
     );
+  }
+
+  void updateAPI() {
+    String server = "${Strings.server}clientes/${cliente.idcliente}";
+    Future<String> getData() async {
+      try {
+        http.Response response;
+        response = await http.put(Uri.encodeFull(server),
+            headers: {"content-type": "application/json"},
+            body: jsonEncode({
+              "nombre": nombresC.text,
+              "domicilio": domicilioC.text,
+              "email": correoC.text,
+              "telefono": numTelefonoC.text,
+              "celular": numCelularC.text,
+              "edad": edadC.text,
+            }));
+        Map<String, dynamic> data = jsonDecode(response.body);
+
+        if (data["valid"] == 1) {
+          Navigator.pop(context);
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  void llenarDatos() {
+    nombresC.text = cliente.nombre;
+    domicilioC.text = cliente.domicilio;
+    edadC.text = "${cliente.edad}";
+    numTelefonoC.text = cliente.telefono;
+    numCelularC.text = cliente.celular;
+    correoC.text = cliente.email;
   }
 }

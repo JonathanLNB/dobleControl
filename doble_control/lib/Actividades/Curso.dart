@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:doble_control/API/FechaM.dart';
 import 'package:doble_control/API/HorarioM.dart';
 import 'package:doble_control/API/InstructorM.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
@@ -9,6 +10,7 @@ import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
 import 'package:doble_control/TDA/Auto.dart';
 import 'package:doble_control/TDA/Cliente.dart';
+import 'package:doble_control/TDA/Fecha.dart';
 import 'package:doble_control/TDA/Horario.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -16,7 +18,6 @@ import 'package:doble_control/TDA/Curso.dart' as CursoTDA;
 import 'package:doble_control/TDA/Instructor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class Curso extends StatefulWidget {
   Cliente cliente;
@@ -36,6 +37,19 @@ class _Curso extends State<Curso> {
   List<Instructor> _instructores = new List<Instructor>();
   List<Auto> _autos = new List<Auto>();
   List<Horario> _horarios = new List<Horario>();
+  List<Fecha> _dates = new List<Fecha>();
+  List<Fecha> dates = [
+    new Fecha(),
+    new Fecha(),
+    new Fecha(),
+    new Fecha(),
+    new Fecha(),
+    new Fecha(),
+    new Fecha(),
+    new Fecha(),
+    new Fecha(),
+    new Fecha()
+  ];
   List<String> _fechas = [
     Strings.iFecha,
     Strings.iFecha,
@@ -69,6 +83,7 @@ class _Curso extends State<Curso> {
     fechaIE = false;
     fechaFE = false;
     especial = false;
+    getData();
   }
 
   @override
@@ -103,8 +118,8 @@ class _Curso extends State<Curso> {
                             Padding(
                               padding: EdgeInsets.all(8),
                             ),
-                            getTitulo(context, Strings.fechaI),
-                            getFechaInicio(context),
+                            getTitulo(context, Strings.auto),
+                            getAuto(context),
                             Padding(
                               padding: EdgeInsets.all(8),
                             ),
@@ -113,37 +128,25 @@ class _Curso extends State<Curso> {
                             Padding(
                               padding: EdgeInsets.all(8),
                             ),
-                            getTitulo(context, Strings.auto),
-                            getAuto(context),
+                            mostrarDias(context),
                             Padding(
-                              padding: EdgeInsets.all(8),
-                            ),
-                            getTitulo(context, Strings.cursoEspecial),
-                            Transform.scale(
-                              scale: 2.0,
-                              child: new Switch(
-                                value: especial,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    especial = value;
-                                  });
+                              padding: EdgeInsets.all(10),
+                              child: new RaisedButton(
+                                onPressed: () {
+                                  //validar y agendar
                                 },
-                                activeColor: AppColors.green,
-                                activeTrackColor: AppColors.green,
-                                activeThumbImage:
-                                    AssetImage('assets/images/check.png'),
-                                inactiveTrackColor: AppColors.red,
-                                inactiveThumbColor: AppColors.red,
-                                inactiveThumbImage:
-                                    AssetImage('assets/images/close.png'),
+                                child: Text(
+                                  Strings.agendar,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: "GoogleSans",
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.colorAccent),
+                                  textAlign: TextAlign.center,
+                                ),
+                                color: AppColors.yellowDark,
                               ),
-                            ),
-                            especial ? mostrarDias(context) : Container(),
-                            Padding(
-                              padding: EdgeInsets.all(8),
-                            ),
-                            getTitulo(context, Strings.fechaF),
-                            getFechaFin(context),
+                            )
                           ],
                         )),
                   ),
@@ -193,7 +196,7 @@ class _Curso extends State<Curso> {
                 hintText: "",
                 hintStyle: TextStyle(
                     fontFamily: "GoogleSans",
-                    color: AppColors.grey,
+                    color: AppColors.blue,
                     fontSize: 17),
                 errorStyle: TextStyle(
                     fontFamily: "GoogleSans",
@@ -235,7 +238,7 @@ class _Curso extends State<Curso> {
                 hintText: "",
                 hintStyle: TextStyle(
                     fontFamily: "GoogleSans",
-                    color: AppColors.grey,
+                    color: AppColors.blue,
                     fontSize: 17),
                 errorStyle: TextStyle(
                     fontFamily: "GoogleSans",
@@ -274,7 +277,7 @@ class _Curso extends State<Curso> {
                 instructor,
                 style: TextStyle(
                     fontFamily: "GoogleSans",
-                    color: AppColors.grey,
+                    color: AppColors.blue,
                     fontSize: 17),
                 textAlign: TextAlign.center,
               ),
@@ -307,6 +310,7 @@ class _Curso extends State<Curso> {
               setState(() {
                 instructor = _instructores[index].nombre;
                 _instructor = _instructores[index];
+                getData();
               });
               Navigator.pop(context);
             },
@@ -361,7 +365,7 @@ class _Curso extends State<Curso> {
                 horario,
                 style: TextStyle(
                     fontFamily: "GoogleSans",
-                    color: AppColors.grey,
+                    color: AppColors.blue,
                     fontSize: 17),
                 textAlign: TextAlign.center,
               ),
@@ -394,13 +398,14 @@ class _Curso extends State<Curso> {
               setState(() {
                 horario = _horarios[index].horario;
                 _horario = _horarios[index];
+                getData();
               });
               Navigator.pop(context);
             },
           );
         },
         scrollDirection: Axis.vertical,
-        itemCount: _instructores.length,
+        itemCount: _horarios.length,
         addAutomaticKeepAlives: true,
       );
     }
@@ -448,7 +453,7 @@ class _Curso extends State<Curso> {
                 curso,
                 style: TextStyle(
                     fontFamily: "GoogleSans",
-                    color: AppColors.grey,
+                    color: AppColors.blue,
                     fontSize: 17),
                 textAlign: TextAlign.center,
               ),
@@ -487,7 +492,7 @@ class _Curso extends State<Curso> {
           );
         },
         scrollDirection: Axis.vertical,
-        itemCount: _instructores.length,
+        itemCount: _cursos.length,
         addAutomaticKeepAlives: true,
       );
     }
@@ -535,7 +540,7 @@ class _Curso extends State<Curso> {
                 auto,
                 style: TextStyle(
                     fontFamily: "GoogleSans",
-                    color: AppColors.grey,
+                    color: AppColors.blue,
                     fontSize: 17),
                 textAlign: TextAlign.center,
               ),
@@ -556,7 +561,7 @@ class _Curso extends State<Curso> {
         itemBuilder: (context, index) {
           return new SimpleDialogOption(
             child: Text(
-              _autos[index].descripcion,
+              _autos[index].tipoauto,
               style: TextStyle(
                   fontSize: 15,
                   fontFamily: "GoogleSans",
@@ -566,15 +571,16 @@ class _Curso extends State<Curso> {
             ),
             onPressed: () {
               setState(() {
-                auto = _autos[index].descripcion;
+                auto = _autos[index].tipoauto;
                 _auto = _autos[index];
+                getData();
               });
               Navigator.pop(context);
             },
           );
         },
         scrollDirection: Axis.vertical,
-        itemCount: _instructores.length,
+        itemCount: _autos.length,
         addAutomaticKeepAlives: true,
       );
     }
@@ -624,7 +630,7 @@ class _Curso extends State<Curso> {
                 _fechas[index],
                 style: TextStyle(
                     fontFamily: "GoogleSans",
-                    color: AppColors.grey,
+                    color: AppColors.blue,
                     fontSize: 17),
                 textAlign: TextAlign.center,
               ),
@@ -638,16 +644,58 @@ class _Curso extends State<Curso> {
     );
   }
 
-  Future _selectDate(int index) async {
-    DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: new DateTime.now(),
-        firstDate: new DateTime(1930),
-        lastDate: DateTime(2101));
-    if (picked != null)
-      setState(() {
-        _fechas[index] = new DateFormat('yyyy-MM-dd').format(picked);
-      });
+  Future _selectDate(int i) async {
+    ListView getLista(BuildContext context) {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return new SimpleDialogOption(
+            child: Text(
+              "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}",
+              style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: "GoogleSans",
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.black),
+              textAlign: TextAlign.center,
+            ),
+            onPressed: () {
+              setState(() {
+                _fechas[i] =
+                    "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}";
+                dates[i] = _dates[index];
+              });
+              Navigator.pop(context);
+            },
+          );
+        },
+        scrollDirection: Axis.vertical,
+        itemCount: _dates.length,
+        addAutomaticKeepAlives: true,
+      );
+    }
+
+    AlertDialog dialog = AlertDialog(
+        title: Text(
+          Strings.iFecha,
+          style: TextStyle(
+              fontSize: 18,
+              fontFamily: "GoogleSans",
+              fontWeight: FontWeight.bold,
+              color: AppColors.black),
+          textAlign: TextAlign.center,
+        ),
+        content: Container(
+          height: 300,
+          child: getLista(context),
+        ));
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
   }
 
   Widget getTitulo(BuildContext context, String titulo) {
@@ -682,6 +730,14 @@ class _Curso extends State<Curso> {
     );
   }
 
+  getData() async {
+    await _getInstructores();
+    await _getAutos();
+    await _getCursos();
+    if (_instructor != null) await _getHorarios();
+    if (_instructor != null && _auto != null) await _getFechas();
+  }
+
   _getInstructores() {
     String server = "${Strings.server}empleados";
     Future<String> getData() async {
@@ -707,7 +763,8 @@ class _Curso extends State<Curso> {
   }
 
   _getHorarios() {
-    String server = "${Strings.server}horarios/${_instructor}";
+    String server =
+        "${Strings.server}empleados/horarios/${_instructor.idinstructor}";
     Future<String> getData() async {
       try {
         http.Response response = await http.get(
@@ -731,7 +788,7 @@ class _Curso extends State<Curso> {
 
   _getFechas() {
     String server =
-        "${Strings.server}horarios/${_horario.idhorario}/${_auto.idAuto}/${DateTime.now().month}";
+        "${Strings.server}clases/${_horario.idhorario}/${_auto.idtipoauto}/${DateTime.now().month}";
     Future<String> getData() async {
       try {
         http.Response response = await http.get(
@@ -741,9 +798,9 @@ class _Curso extends State<Curso> {
           },
         );
         //Navigator.pop(context);
-        HorarioM modelo = new HorarioM.fromJson(jsonDecode(response.body));
+        FechasM modelo = new FechasM.fromJson(jsonDecode(response.body));
         setState(() {
-          _horarios = modelo.horarios;
+          _dates = modelo.fechas;
         });
       } catch (e) {
         Fluttertoast.showToast(msg: Strings.errorS);
@@ -751,6 +808,16 @@ class _Curso extends State<Curso> {
     }
 
     getData();
+  }
+
+  _getAutos() {
+    _autos = List<Auto>.from(
+        json.decode(Strings.autos).map((x) => Auto.fromJson(x)));
+  }
+
+  _getCursos() {
+    _cursos = List<CursoTDA.Curso>.from(
+        json.decode(Strings.cursos).map((x) => CursoTDA.Curso.fromJson(x)));
   }
 
   _onLoading(BuildContext context) {

@@ -318,7 +318,7 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
     //todo monday => 1, sunday => 7
     int _diff = getDiferencia(false);
 
-    DateTime _startMonth = new DateTime(date.year, date.month - meses, date.day)
+    DateTime _startMonth = new DateTime(date.year, date.month - meses, date.day, 14, 0, 0)
         .subtract(Duration(days: _diff));
     return _startMonth;
   }
@@ -332,8 +332,6 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
         (new DateTime(date.year, date.month - meses, date.day).day / 7).ceil() *
                 7 +
             _weekday;
-    print("Weekday: " + _weekday.toString());
-    print("Diferencia: " + _diff.toString());
     return weekday ? _weekday : _diff;
   }
 

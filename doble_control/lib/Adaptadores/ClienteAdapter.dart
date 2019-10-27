@@ -1,9 +1,7 @@
 import 'package:doble_control/Actividades/Curso.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
-import 'package:doble_control/TDA/Clase.dart';
 import 'package:doble_control/TDA/Cliente.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 
 class ClienteAdapter extends StatelessWidget {

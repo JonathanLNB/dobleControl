@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:doble_control/Actividades/Principal.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
-import 'package:doble_control/TDA/Clase.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
+import 'package:http/http.dart' as http;
 import 'package:doble_control/TDA/Instructor.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
@@ -24,16 +29,12 @@ class InstructorAdapter extends StatelessWidget {
           )),
       secondaryActions: <Widget>[
         IconSlideAction(
-          caption: 'Contacto',
-          color: AppColors.green,
-          icon: Icons.book,
-          onTap: () => {},
-        ),
-        IconSlideAction(
           caption: 'Eliminar',
           color: AppColors.red,
           icon: Icons.delete_forever,
-          onTap: () => {},
+          onTap: () {
+            advertencia(context);
+          },
         ),
       ],
     );
@@ -138,5 +139,67 @@ class InstructorAdapter extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void advertencia(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (_) => AssetGiffyDialog(
+          image: Image.asset('assets/images/sea.gif', fit: BoxFit.cover),
+          title: Text(
+            Strings.eliminarInstructor,
+            style: TextStyle(
+                fontSize: 22,
+                fontFamily: "GoogleSans",
+                fontWeight: FontWeight.bold,
+                color: AppColors.green),
+          ),
+          description: Text(
+            '¿Estas seguro de eliminar a ${instructor.nombre}?',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 15,
+                fontFamily: "GoogleSans",
+                color: AppColors.green),
+          ),
+          buttonCancelText: Text(
+            Strings.cancelar,
+            style: TextStyle(
+                fontFamily: "GoogleSans", color: AppColors.colorAccent),
+          ),
+          buttonOkText: Text(
+            Strings.aceptar,
+            style: TextStyle(
+                fontFamily: "GoogleSans", color: AppColors.colorAccent),
+          ),
+          onOkButtonPressed: () {
+            deleteInstructor(context);
+          },
+        ));
+  }
+
+  void deleteInstructor(BuildContext context) {
+    String server = "${Strings.server}empleados/${instructor.idinstructor}";
+    Future<String> getData() async {
+      try {
+        http.Response response;
+        response = await http.delete(
+          Uri.encodeFull(server),
+          headers: {"content-type": "application/json"},
+        );
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data["valid"] == 1) {
+          Fluttertoast.showToast(msg: Strings.instructorDelete);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Principal()),
+              ModalRoute.withName('/principal'));
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+    getData();
   }
 }

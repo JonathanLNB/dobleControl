@@ -1,7 +1,19 @@
-class Auto{
-  int idAuto;
-  String descripcion;
+class Auto {
+  int idtipoauto;
+  String tipoauto;
 
-  Auto(this.idAuto, this.descripcion);
+  Auto({
+    this.idtipoauto,
+    this.tipoauto,
+  });
 
+  factory Auto.fromJson(Map<String, dynamic> json) => Auto(
+        idtipoauto: json["idtipoauto"],
+        tipoauto: json["tipoauto"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "idtipoauto": idtipoauto,
+        "tipoauto": tipoauto,
+      };
 }
