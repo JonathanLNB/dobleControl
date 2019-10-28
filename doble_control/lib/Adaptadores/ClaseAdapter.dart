@@ -1,8 +1,12 @@
+import 'package:doble_control/Actividades/Principal.dart';
+import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 
 class ClaseAdapter extends StatelessWidget {
   ClaseAdapter(this.clase);
@@ -21,26 +25,36 @@ class ClaseAdapter extends StatelessWidget {
           child: new Stack(
             children: <Widget>[getClase(context)],
           )),
-
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: 'Contacto',
           color: AppColors.green,
           icon: Icons.book,
-          onTap: () => {},
+          onTap: () {
+            showDialog(
+                context: context,
+                builder: (_) => Center(
+                        child: Container(
+                      height: 165,
+                      child:
+                          ClienteAdapter(cliente: clase.cliente, opcion: false),
+                    )));
+          },
         ),
         IconSlideAction(
           caption: 'Reagendar',
           foregroundColor: AppColors.colorAccent,
           color: AppColors.yellowDark,
           icon: Icons.edit,
-          onTap: () => {},
+          onTap: () {},
         ),
         IconSlideAction(
           caption: 'Falta',
           color: AppColors.red,
           icon: Icons.cancel,
-          onTap: () => {},
+          onTap: () {
+            falta(context);
+          },
         ),
       ],
     );
@@ -163,5 +177,46 @@ class ClaseAdapter extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void falta(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (_) => AssetGiffyDialog(
+              image: Image.asset('assets/images/sea.gif', fit: BoxFit.cover),
+              title: Text(
+                Strings.confirmacion,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontFamily: "GoogleSans",
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.green),
+              ),
+              description: Text(
+                '¿${clase.cliente.nombre} faltó?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: "GoogleSans",
+                    color: AppColors.green),
+              ),
+              buttonCancelText: Text(
+                Strings.cancelar,
+                style: TextStyle(
+                    fontFamily: "GoogleSans", color: AppColors.colorAccent),
+              ),
+              buttonOkText: Text(
+                Strings.aceptar,
+                style: TextStyle(
+                    fontFamily: "GoogleSans", color: AppColors.colorAccent),
+              ),
+              onOkButtonPressed: () {
+                Fluttertoast.showToast(msg: Strings.falta);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Principal()),
+                    ModalRoute.withName('/principal'));
+              },
+            ));
   }
 }

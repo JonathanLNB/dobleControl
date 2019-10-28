@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:doble_control/API/FechaM.dart';
 import 'package:doble_control/API/HorarioM.dart';
+import 'package:doble_control/API/Insercion.dart';
 import 'package:doble_control/API/InstructorM.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
@@ -18,6 +19,8 @@ import 'package:doble_control/TDA/Curso.dart' as CursoTDA;
 import 'package:doble_control/TDA/Instructor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'Principal.dart';
 
 class Curso extends StatefulWidget {
   Cliente cliente;
@@ -134,6 +137,10 @@ class _Curso extends State<Curso> {
                               child: new RaisedButton(
                                 onPressed: () {
                                   //validar y agendar
+
+                                  if (validar()) {
+                                    agendarCurso();
+                                  }
                                 },
                                 child: Text(
                                   Strings.agendar,
@@ -170,90 +177,6 @@ class _Curso extends State<Curso> {
           ),
         ),
       ]),
-    );
-  }
-
-  Widget getFechaInicio(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Container(
-        width: MediaQuery.of(context).size.width - 40,
-        child: Material(
-          elevation: 10,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(5),
-                  topRight: Radius.circular(5))),
-          child: Padding(
-            padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-            child: TextField(
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              controller: fechaIC,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "",
-                hintStyle: TextStyle(
-                    fontFamily: "GoogleSans",
-                    color: AppColors.blue,
-                    fontSize: 17),
-                errorStyle: TextStyle(
-                    fontFamily: "GoogleSans",
-                    color: AppColors.red,
-                    fontSize: 17),
-                errorText: fechaIE ? Strings.campovacio : null,
-                suffixIcon: Icon(
-                  Icons.date_range,
-                  color: AppColors.black,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget getFechaFin(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Container(
-        width: MediaQuery.of(context).size.width - 40,
-        child: Material(
-          elevation: 10,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(5),
-                  topRight: Radius.circular(5))),
-          child: Padding(
-            padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-            child: TextField(
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              controller: fechaFC,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "",
-                hintStyle: TextStyle(
-                    fontFamily: "GoogleSans",
-                    color: AppColors.blue,
-                    fontSize: 17),
-                errorStyle: TextStyle(
-                    fontFamily: "GoogleSans",
-                    color: AppColors.red,
-                    fontSize: 17),
-                errorText: fechaFE ? Strings.campovacio : null,
-                suffixIcon: Icon(
-                  Icons.date_range,
-                  color: AppColors.black,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -333,7 +256,7 @@ class _Curso extends State<Curso> {
           textAlign: TextAlign.center,
         ),
         content: Container(
-          height: 300,
+          height: 200,
           child: getLista(context),
         ));
 
@@ -508,7 +431,7 @@ class _Curso extends State<Curso> {
           textAlign: TextAlign.center,
         ),
         content: Container(
-          height: 300,
+          height: 200,
           child: getLista(context),
         ));
 
@@ -596,7 +519,7 @@ class _Curso extends State<Curso> {
           textAlign: TextAlign.center,
         ),
         content: Container(
-          height: 300,
+          height: 200,
           child: getLista(context),
         ));
 
@@ -820,6 +743,33 @@ class _Curso extends State<Curso> {
         json.decode(Strings.cursos).map((x) => CursoTDA.Curso.fromJson(x)));
   }
 
+  bool validar() {
+    bool pasa = true;
+    _fechas.forEach((fecha) {
+      if (fecha == Strings.iFecha) {
+        pasa = false;
+        Fluttertoast.showToast(msg: Strings.errorForm);
+      }
+    });
+    if (_curso == null) {
+      Fluttertoast.showToast(msg: Strings.errorForm);
+      pasa = false;
+    }
+    if (_auto == null) {
+      Fluttertoast.showToast(msg: Strings.errorForm);
+      pasa = false;
+    }
+    if (_horario == null) {
+      Fluttertoast.showToast(msg: Strings.errorForm);
+      pasa = false;
+    }
+    if (_instructor == null) {
+      Fluttertoast.showToast(msg: Strings.errorForm);
+      pasa = false;
+    }
+    return pasa;
+  }
+
   _onLoading(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
@@ -830,5 +780,39 @@ class _Curso extends State<Curso> {
         )
       ],
     );
+  }
+
+  void agendarCurso() {
+    String server = "${Strings.server}clases";
+    showDialog(context: context, builder: (_) => _onLoading(context));
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.post(Uri.encodeFull(server),
+            headers: {
+              "content-type": "application/json",
+            },
+            body: jsonEncode({
+              "idInstructorH": _horario.idhorario,
+              "idCliente": cliente.idcliente,
+              "idCurso": _curso.idcurso,
+              "idTipoAuto": _auto.idtipoauto,
+              "fechas": dates
+            }));
+        Navigator.pop(context);
+        Insercion modelo = new Insercion.fromJson(jsonDecode(response.body));
+        if (modelo.valid == 1) {
+          Fluttertoast.showToast(msg: Strings.cursoAgendado);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Principal()),
+              ModalRoute.withName('/principal'));
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
   }
 }

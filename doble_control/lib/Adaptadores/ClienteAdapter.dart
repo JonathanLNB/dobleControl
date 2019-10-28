@@ -5,20 +5,22 @@ import 'package:doble_control/TDA/Cliente.dart';
 import 'package:flutter/material.dart';
 
 class ClienteAdapter extends StatelessWidget {
-  ClienteAdapter(this.cliente);
+  ClienteAdapter({this.cliente, this.opcion});
 
   Cliente cliente;
-
+  bool opcion = true;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  Curso(cliente)),
-        );
+        if(opcion) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    Curso(cliente)),
+          );
+        }
       },
       child: Container(
           margin: const EdgeInsets.symmetric(

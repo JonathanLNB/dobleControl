@@ -149,7 +149,9 @@ class _Alumnos extends State<Alumnos> {
                                         }
                                       },
                                       child: Text(
-                                        update?Strings.actualizar:Strings.siguiente,
+                                        update
+                                            ? Strings.actualizar
+                                            : Strings.siguiente,
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontFamily: "GoogleSans",
@@ -236,7 +238,7 @@ class _Alumnos extends State<Alumnos> {
               Cliente aux = _clientes[index];
               return Container(
                 margin: EdgeInsets.only(top: 5, bottom: 5),
-                child: ClienteAdapter(aux),
+                child: ClienteAdapter(cliente: aux, opcion: true,),
               );
             },
             scrollDirection: Axis.vertical,

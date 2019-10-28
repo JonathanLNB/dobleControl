@@ -25,6 +25,7 @@ class LogIn extends StatefulWidget {
 class _LogIn extends State<LogIn> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseMessaging firebase = new FirebaseMessaging();
+  UserUpdateInfo userUpdate = new UserUpdateInfo();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   TextEditingController correoC = new TextEditingController();
   TextEditingController passwordC = new TextEditingController();
@@ -39,6 +40,19 @@ class _LogIn extends State<LogIn> {
   @override
   void initState() {
     passwordVisible = true;
+    getUser().then((user) {
+      if (user != null) {
+        if (idUser != 0)
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Principal()),
+              ModalRoute.withName('/principal'));
+        else {
+          _googleSignIn.signOut();
+          _auth.signOut();
+        }
+      }
+    });
   }
 
   @override
@@ -142,12 +156,7 @@ class _LogIn extends State<LogIn> {
                               padding: EdgeInsets.all(10),
                               child: new RaisedButton(
                                 onPressed: () async {
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Principal()),
-                                      ModalRoute.withName('/principal'));
-                                  // _signInWithEmailPassword();
+                                  _signInWithEmailPassword();
                                 },
                                 child: Text(
                                   Strings.ingresar,
@@ -161,97 +170,6 @@ class _LogIn extends State<LogIn> {
                                 color: AppColors.green,
                               ),
                             ),
-                            Row(children: <Widget>[
-                              Expanded(
-                                  child: Divider(
-                                color: AppColors.green,
-                                height: 5,
-                              )),
-                              Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Text(
-                                  Strings.registro,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: "GoogleSans",
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.green),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              Expanded(
-                                  child: Divider(
-                                color: AppColors.green,
-                                height: 5,
-                              )),
-                            ]),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: new RaisedButton(
-                                onPressed: () async {
-                                  goSignIn(false);
-                                },
-                                child: Text(
-                                  Strings.registrar,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: "GoogleSans",
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.colorAccent),
-                                  textAlign: TextAlign.center,
-                                ),
-                                color: AppColors.yellowDark,
-                              ),
-                            ),
-                            Row(children: <Widget>[
-                              Expanded(
-                                  child: Divider(
-                                color: AppColors.green,
-                                height: 5,
-                              )),
-                              Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Text(
-                                  Strings.otrosMetodos,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: "GoogleSans",
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.green),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              Expanded(
-                                  child: Divider(
-                                color: AppColors.green,
-                                height: 5,
-                              )),
-                            ]),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.all(5),
-                                      child: new RaisedButton(
-                                        onPressed: () async {
-                                          _signInWithGoogle();
-                                        },
-                                        child: Text(
-                                          Strings.google,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: "GoogleSans",
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.colorAccent),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        color: AppColors.red,
-                                      ),
-                                    ),
-                                  ]),
-                            )
                           ],
                         )),
                   ),
@@ -492,31 +410,28 @@ class _LogIn extends State<LogIn> {
     final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
             email: correoC.text, password: passwordC.text))
         .user;
-    if (user.isEmailVerified) {
-      assert(user.email != null);
-      assert(user.displayName != null);
-      assert(!user.isAnonymous);
-      assert(await user.getIdToken() != null);
+    userUpdate.displayName = "Doble Control";
+    user.updateProfile(userUpdate);
+    await user.reload();
+    assert(user.email != null);
+    assert(await user.getIdToken() != null);
 
-      final FirebaseUser currentUser = await _auth.currentUser();
-      assert(user.uid == currentUser.uid);
-      if (user != null) {
-        _success = true;
-        _userID = user.uid;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => _onLoading(context),
-        );
-        //logInAPI(currentUser.email, false);
-        foto = currentUser.photoUrl;
-      } else {
-        _success = false;
-      }
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
+    if (user != null) {
+      _success = true;
+      _userID = user.uid;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => _onLoading(context),
+      );
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Principal()),
+          ModalRoute.withName('/principal'));
     } else {
-      dialogo = false;
-      showMessage(context);
-      _auth.signOut();
+      _success = false;
     }
   }
 
@@ -604,15 +519,6 @@ class _LogIn extends State<LogIn> {
   }
 
   Future goPrincipal() async {
-    /*await info.setIdUser(dataM.login.id);
-    await info.setUsername(dataM.login.username);
-    await info.setNombre(dataM.login.name);
-    await info.setApellidos(dataM.login.lastname);
-    await info.setBirthday(dataM.login.birthday);
-    await info.setRol(dataM.login.roleId);
-    await info.setGenero(dataM.login.genderId);
-    await info.setAPIToken(dataM.login.apiToken);
-    print("Token: ${await info.getAPIToken()}");*/
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Principal()),

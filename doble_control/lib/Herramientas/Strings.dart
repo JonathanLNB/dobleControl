@@ -119,4 +119,6 @@ class Strings {
   static String instructorDelete = "¡Instructor Eliminadó Correctamente!";
   static String eliminarInstructor = "Eliminar Instructor";
   static String agendar = "Agendar";
+  static String cursoAgendado = "¡Curso Agendado!";
+  static String falta = "¡Se le asigno una falta al alumno!";
 }
