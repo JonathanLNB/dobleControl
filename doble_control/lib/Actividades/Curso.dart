@@ -6,6 +6,7 @@ import 'package:doble_control/API/HorarioM.dart';
 import 'package:doble_control/API/Insercion.dart';
 import 'package:doble_control/API/InstructorM.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
+import 'package:doble_control/Herramientas/ShowDialog.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/Herramientas/navigation_bar.dart';
@@ -185,7 +186,10 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery.of(context).size.width - 40,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -195,7 +199,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 instructor,
                 style: TextStyle(
@@ -245,7 +249,8 @@ class _Curso extends State<Curso> {
       );
     }
 
-    AlertDialog dialog = AlertDialog(
+
+    ShowDialog dialog = ShowDialog(
         title: Text(
           Strings.iInstructor,
           style: TextStyle(
@@ -256,7 +261,8 @@ class _Curso extends State<Curso> {
           textAlign: TextAlign.center,
         ),
         content: Container(
-          height: 200,
+          height: 300,
+          width: 300,
           child: getLista(context),
         ));
 
@@ -273,7 +279,10 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery.of(context).size.width - 40,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -283,7 +292,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 horario,
                 style: TextStyle(
@@ -333,7 +342,7 @@ class _Curso extends State<Curso> {
       );
     }
 
-    AlertDialog dialog = AlertDialog(
+    ShowDialog dialog = ShowDialog(
         title: Text(
           Strings.iHorario2,
           style: TextStyle(
@@ -361,7 +370,10 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery.of(context).size.width - 40,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -371,7 +383,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 curso,
                 style: TextStyle(
@@ -420,7 +432,7 @@ class _Curso extends State<Curso> {
       );
     }
 
-    AlertDialog dialog = AlertDialog(
+    ShowDialog dialog = ShowDialog(
         title: Text(
           Strings.iCurso,
           style: TextStyle(
@@ -431,7 +443,8 @@ class _Curso extends State<Curso> {
           textAlign: TextAlign.center,
         ),
         content: Container(
-          height: 200,
+          height: 300,
+          width: 300,
           child: getLista(context),
         ));
 
@@ -448,7 +461,10 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery.of(context).size.width - 40,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -458,7 +474,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 auto,
                 style: TextStyle(
@@ -508,7 +524,7 @@ class _Curso extends State<Curso> {
       );
     }
 
-    AlertDialog dialog = AlertDialog(
+    ShowDialog dialog = ShowDialog(
         title: Text(
           Strings.iAuto,
           style: TextStyle(
@@ -519,7 +535,8 @@ class _Curso extends State<Curso> {
           textAlign: TextAlign.center,
         ),
         content: Container(
-          height: 200,
+          height: 300,
+          width: 300,
           child: getLista(context),
         ));
 
@@ -536,7 +553,10 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery.of(context).size.width - 40,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -548,7 +568,7 @@ class _Curso extends State<Curso> {
                     topLeft: Radius.circular(5))),
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 _fechas[index],
                 style: TextStyle(
@@ -574,7 +594,8 @@ class _Curso extends State<Curso> {
         itemBuilder: (context, index) {
           return new SimpleDialogOption(
             child: Text(
-              "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}",
+              "${_dates[index].dia} ${_dates[index].iddia} de ${Strings
+                  .meses[(_dates[index].idmes - 1)]}",
               style: TextStyle(
                   fontSize: 15,
                   fontFamily: "GoogleSans",
@@ -585,7 +606,8 @@ class _Curso extends State<Curso> {
             onPressed: () {
               setState(() {
                 _fechas[i] =
-                    "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}";
+                "${_dates[index].dia} ${_dates[index].iddia} de ${Strings
+                    .meses[(_dates[index].idmes - 1)]}";
                 dates[i] = _dates[index];
               });
               Navigator.pop(context);
@@ -598,7 +620,7 @@ class _Curso extends State<Curso> {
       );
     }
 
-    AlertDialog dialog = AlertDialog(
+    ShowDialog dialog = ShowDialog(
         title: Text(
           Strings.iFecha,
           style: TextStyle(
@@ -673,7 +695,7 @@ class _Curso extends State<Curso> {
         );
         //Navigator.pop(context);
         InstructorM modelo =
-            new InstructorM.fromJson(jsonDecode(response.body));
+        new InstructorM.fromJson(jsonDecode(response.body));
         setState(() {
           _instructores = modelo.instructores;
         });
@@ -711,7 +733,10 @@ class _Curso extends State<Curso> {
 
   _getFechas() {
     String server =
-        "${Strings.server}clases/${_horario.idhorario}/${_auto.idtipoauto}/${DateTime.now().month}";
+        "${Strings.server}clases/${_horario.idhorario}/${_auto
+        .idtipoauto}/${DateTime
+        .now()
+        .month}";
     Future<String> getData() async {
       try {
         http.Response response = await http.get(

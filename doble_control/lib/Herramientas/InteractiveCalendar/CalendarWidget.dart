@@ -58,7 +58,11 @@ class InteractiveCalendarState extends State<InteractiveCalendar> {
   _getCalendario() {
     /*String server =
         "${Strings.server}clases/${DateTime.now().day}/${DateTime.now().month}";*/
-    String server = "${Strings.server}clases/${date.month - meses}";
+    int mes = date.month-meses;
+    while(mes <= 0)
+      mes+=12;
+    print(mes);
+    String server = "${Strings.server}clases/${mes}";
     Future<String> getData() async {
       try {
         http.Response response = await http.get(

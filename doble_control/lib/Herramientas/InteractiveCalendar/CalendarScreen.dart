@@ -28,45 +28,6 @@ class CalendarScreenState extends State<CalendarScreen> {
         Column(
           children: <Widget>[
             buildContent(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 5, right: 5),
-                  child: new RaisedButton(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      Strings.cursoD,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: "GoogleSans",
-                          color: AppColors.colorAccent),
-                      textAlign: TextAlign.center,
-                    ),
-                    color: AppColors.green,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 5, left: 5),
-                  child: new RaisedButton(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      Strings.fechaD,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: "GoogleSans",
-                          color: AppColors.colorAccent),
-                      textAlign: TextAlign.center,
-                    ),
-                    color: AppColors.green,
-                  ),
-                ),
-              ],
-            )
           ],
         ),
         NavigationBar(false),

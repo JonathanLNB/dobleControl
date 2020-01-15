@@ -77,7 +77,7 @@ class Strings {
   static String iFecha = "Ingresar fecha";
   static String fecha = "Fecha";
   static String nuevoInstructor = "Nuevo Instructor";
-  static String server = "http://192.168.1.69:3000/api/";
+  static String server = "http://ec2-18-216-188-165.us-east-2.compute.amazonaws.com:8000/api/";
   static String errorForm = "No has completado todo el formulario 😱";
   static String verificacionInfo =
       "Enviamos un e-mail de verificación al correo electrónico. Ingresa, verifica la cuenta y vuelve para disfrutar de los beneficios de Doble Control.";

@@ -11,6 +11,7 @@ import 'package:giffy_dialog/giffy_dialog.dart';
 class ClaseAdapter extends StatelessWidget {
   ClaseAdapter(this.clase);
 
+
   Clase clase;
 
   @override
@@ -41,13 +42,7 @@ class ClaseAdapter extends StatelessWidget {
                     )));
           },
         ),
-        IconSlideAction(
-          caption: 'Reagendar',
-          foregroundColor: AppColors.colorAccent,
-          color: AppColors.yellowDark,
-          icon: Icons.edit,
-          onTap: () {},
-        ),
+
         IconSlideAction(
           caption: 'Falta',
           color: AppColors.red,
