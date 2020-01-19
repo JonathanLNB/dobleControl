@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:doble_control/API/FechaM.dart';
+import 'package:doble_control/API/HorarioM.dart';
 import 'package:doble_control/API/Insercion.dart';
 import 'package:doble_control/Actividades/Principal.dart';
 import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
@@ -8,6 +9,7 @@ import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
 import 'package:doble_control/TDA/Fecha.dart';
+import 'package:doble_control/TDA/Horario.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,13 +22,15 @@ import '../Herramientas/ShowDialog.dart';
 class ClaseAdapter extends StatelessWidget {
 
   ClaseAdapter(this.clase, this._scaffoldKey) {
-    _getFechas();
+    _getHorarios();
   }
 
   GlobalKey<ScaffoldState> _scaffoldKey;
   Clase clase;
   Fecha fecha;
+  Horario _horario;
   List<Fecha> _dates = new List<Fecha>();
+  List<Horario> _horarios = new List<Horario>();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +66,7 @@ class ClaseAdapter extends StatelessWidget {
           icon: Icons.edit,
           foregroundColor: AppColors.colorAccent,
           onTap: () {
-            _selectDate(_scaffoldKey.currentContext);
+            _showHorario(_scaffoldKey.currentContext);
           },
         ),
         IconSlideAction(
@@ -319,7 +323,7 @@ class ClaseAdapter extends StatelessWidget {
 
   _getFechas() {
     String server =
-        "${Strings.server}clases/${clase.idInstructorH}/${clase.idtipoauto}/${DateTime.now().month}";
+        "${Strings.server}clases/${_horario.idhorario}/${clase.idtipoauto}/${DateTime.now().month}";
     Future<String> getData() async {
       try {
         http.Response response = await http.get(
@@ -331,6 +335,7 @@ class ClaseAdapter extends StatelessWidget {
         //Navigator.pop(context);
         FechasM modelo = new FechasM.fromJson(jsonDecode(response.body));
         _dates = modelo.fechas;
+        _selectDate(_scaffoldKey.currentContext);
       } catch (e) {
         Fluttertoast.showToast(msg: Strings.errorS);
       }
@@ -428,9 +433,61 @@ class ClaseAdapter extends StatelessWidget {
     );
   }
 
+  _showHorario(BuildContext context) {
+    ListView getLista(BuildContext context) {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return new SimpleDialogOption(
+            child: Text(
+              _horarios[index].horario,
+              style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: "GoogleSans",
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.black),
+              textAlign: TextAlign.center,
+            ),
+            onPressed: () {
+                String horario = _horarios[index].horario;
+                _horario = _horarios[index];
+                _getFechas();
+                Navigator.pop(_scaffoldKey.currentContext);
+            },
+          );
+        },
+        scrollDirection: Axis.vertical,
+        itemCount: _horarios.length,
+        addAutomaticKeepAlives: true,
+      );
+    }
+
+    ShowDialog dialog = ShowDialog(
+        title: Text(
+          Strings.iHorario2,
+          style: TextStyle(
+              fontSize: 18,
+              fontFamily: "GoogleSans",
+              fontWeight: FontWeight.bold,
+              color: AppColors.black),
+          textAlign: TextAlign.center,
+        ),
+        content: Container(
+          height: 300,
+          child: getLista(context),
+        ));
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+  }
+
   reagendarServ(BuildContext context, String fecha) async {
     String server =
-        "${Strings.server}clases/reagendar/${clase.cliente.idcliente}/${clase.idcalendario}/${this.fecha.iddia}/${this.fecha.idmes}";
+        "${Strings.server}clases/reagendar/${clase.cliente.idcliente}/${clase.idcalendario}/${this.fecha.iddia}/${this.fecha.idmes}/${_horario.idhorario}";
     Future<String> getData() async {
       try {
         http.Response response = await http.put(
@@ -507,5 +564,28 @@ class ClaseAdapter extends StatelessWidget {
       }
     }
     await getData();
+  }
+
+
+  _getHorarios() {
+    String server =
+        "${Strings.server}empleados/horarios/${clase.instructor.idinstructor}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        HorarioM modelo = new HorarioM.fromJson(jsonDecode(response.body));
+        _horarios = modelo.horarios;
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
   }
 }
