@@ -120,5 +120,11 @@ class Strings {
   static String eliminarInstructor = "Eliminar Instructor";
   static String agendar = "Agendar";
   static String cursoAgendado = "¡Curso Agendado!";
+  static String cursoReagendado = "¡Curso Reagendado!";
   static String falta = "¡Se le asigno una falta al alumno!";
+  static String pagado = "¿El curso fue pagado?";
+  static String cursoEliminado = "¡Curso Eliminado!";
+  static String cursoPagado =  "¡Curso Pagado!";
+  static String reservaciones = "Reservaciones";
+  static String sinReservaciones = "No tiene reservaciones pendientes";
 }

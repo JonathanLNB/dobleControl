@@ -1,18 +1,28 @@
+import 'dart:convert';
+
+import 'package:doble_control/API/FechaM.dart';
+import 'package:doble_control/API/Insercion.dart';
 import 'package:doble_control/Actividades/Principal.dart';
 import 'package:doble_control/Adaptadores/ClienteAdapter.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
 import 'package:doble_control/TDA/Clase.dart';
+import 'package:doble_control/TDA/Fecha.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 
 class ClaseAdapter extends StatelessWidget {
-  ClaseAdapter(this.clase);
-
+  ClaseAdapter(this.clase) {
+    _getFechas();
+  }
 
   Clase clase;
+  Fecha fecha;
+  List<Fecha> _dates = new List<Fecha>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +52,36 @@ class ClaseAdapter extends StatelessWidget {
                     )));
           },
         ),
-
+        IconSlideAction(
+          caption: 'Reagendar',
+          color: AppColors.yellowDark,
+          icon: Icons.edit,
+          onTap: () {
+            _selectDate();
+          },
+        ),
         IconSlideAction(
           caption: 'Falta',
           color: AppColors.red,
           icon: Icons.cancel,
           onTap: () {
             falta(context);
+          },
+        ),
+        clase.pagado?Container():IconSlideAction(
+          caption: 'Pagar',
+          color: AppColors.green,
+          icon: Icons.monetization_on,
+          onTap: () {
+            pagar(context);
+          },
+        ),
+        clase.pagado?Container():IconSlideAction(
+          caption: 'Eliminar',
+          color: AppColors.red,
+          icon: Icons.delete,
+          onTap: () {
+            eliminar(context);
           },
         ),
       ],
@@ -62,7 +95,9 @@ class ClaseAdapter extends StatelessWidget {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         elevation: 5.0,
-        color: AppColors.green,
+        color: clase.asistio
+            ? clase.pagado ? AppColors.green : AppColors.yellowDark
+            : clase.pagado ? AppColors.red : AppColors.yellowDark,
         child: Column(
           children: <Widget>[
             Container(
@@ -206,12 +241,240 @@ class ClaseAdapter extends StatelessWidget {
                     fontFamily: "GoogleSans", color: AppColors.colorAccent),
               ),
               onOkButtonPressed: () {
-                Fluttertoast.showToast(msg: Strings.falta);
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => Principal()),
-                    ModalRoute.withName('/principal'));
+                ponerFalta(context);
               },
             ));
+  }
+
+  void reagendar(BuildContext context, String fecha) async {
+    showDialog(
+        context: context,
+        builder: (_) => AssetGiffyDialog(
+              image: Image.asset('assets/images/sea.gif', fit: BoxFit.cover),
+              title: Text(
+                Strings.confirmacion,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontFamily: "GoogleSans",
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.green),
+              ),
+              description: Text(
+                '¿${clase.cliente.nombre} será reagendado para el ${fecha}?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: "GoogleSans",
+                    color: AppColors.green),
+              ),
+              buttonCancelText: Text(
+                Strings.cancelar,
+                style: TextStyle(
+                    fontFamily: "GoogleSans", color: AppColors.colorAccent),
+              ),
+              buttonOkText: Text(
+                Strings.aceptar,
+                style: TextStyle(
+                    fontFamily: "GoogleSans", color: AppColors.colorAccent),
+              ),
+              onOkButtonPressed: () {
+                reagendarServ(context, fecha);
+              },
+            ));
+  }
+
+  ponerFalta(BuildContext context) {
+    String server =
+        "${Strings.server}falta/${clase.cliente.idcliente}/${clase.idcalendario}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.put(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        Insercion modelo = new Insercion.fromJson(jsonDecode(response.body));
+        if (modelo.valid == 1) {
+          Fluttertoast.showToast(msg: Strings.cursoAgendado);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Principal()),
+              ModalRoute.withName('/principal'));
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  _getFechas() {
+    String server =
+        "${Strings.server}clases/${clase.idInstructorH}/${clase.idtipoauto}/${DateTime.now().month}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.get(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        //Navigator.pop(context);
+        FechasM modelo = new FechasM.fromJson(jsonDecode(response.body));
+        _dates = modelo.fechas;
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+
+    getData();
+  }
+
+  Widget getFecha(BuildContext context, int index) {
+    return GestureDetector(
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Container(
+          width: MediaQuery.of(context).size.width - 40,
+          child: Material(
+            elevation: 10,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(5),
+                    bottomLeft: Radius.circular(5),
+                    topRight: Radius.circular(5),
+                    topLeft: Radius.circular(5))),
+            child: Padding(
+              padding:
+                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+              child: Text(
+                Strings.iFecha,
+                style: TextStyle(
+                    fontFamily: "GoogleSans",
+                    color: AppColors.blue,
+                    fontSize: 17),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      ),
+      onTap: () {
+        _selectDate();
+      },
+    );
+  }
+
+  Future _selectDate() async {
+    ListView getLista(BuildContext context) {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return new SimpleDialogOption(
+            child: Text(
+              "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}",
+              style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: "GoogleSans",
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.black),
+              textAlign: TextAlign.center,
+            ),
+            onPressed: () {
+              String _fecha =
+                  "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}";
+              fecha = _dates[index];
+              Navigator.pop(context);
+              reagendar(context, _fecha);
+            },
+          );
+        },
+        scrollDirection: Axis.vertical,
+        itemCount: _dates.length,
+        addAutomaticKeepAlives: true,
+      );
+    }
+  }
+
+  void reagendarServ(BuildContext context, String fecha) {
+    String server =
+        "${Strings.server}reagendar/${clase.cliente.idcliente}/${clase.idcalendario}/${this.fecha.iddia}/${this.fecha.idmes}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.put(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        Insercion modelo = new Insercion.fromJson(jsonDecode(response.body));
+        if (modelo.valid == 1) {
+          Fluttertoast.showToast(msg: Strings.cursoReagendado);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Principal()),
+              ModalRoute.withName('/principal'));
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+  }
+
+  void pagar(BuildContext context) {
+    String server =
+        "${Strings.server}/reservacion/${clase.cliente.idcliente}/${clase.idInstructorH}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.put(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        Insercion modelo = new Insercion.fromJson(jsonDecode(response.body));
+        if (modelo.valid == 1) {
+          Fluttertoast.showToast(msg: Strings.cursoPagado);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Principal()),
+              ModalRoute.withName('/principal'));
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
+  }
+
+  void eliminar(BuildContext context) {
+    String server =
+        "${Strings.server}/reservacion/${clase.cliente.idcliente}/${clase.idInstructorH}";
+    Future<String> getData() async {
+      try {
+        http.Response response = await http.delete(
+          Uri.encodeFull(server),
+          headers: {
+            "content-type": "application/json",
+          },
+        );
+        Insercion modelo = new Insercion.fromJson(jsonDecode(response.body));
+        if (modelo.valid == 1) {
+          Fluttertoast.showToast(msg: Strings.cursoEliminado);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Principal()),
+              ModalRoute.withName('/principal'));
+        } else
+          Fluttertoast.showToast(msg: Strings.errorS);
+      } catch (e) {
+        Fluttertoast.showToast(msg: Strings.errorS);
+      }
+    }
   }
 }

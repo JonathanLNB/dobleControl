@@ -5,9 +5,13 @@ class Clase {
   int idcalendario;
   Instructor instructor;
   Cliente cliente;
+  int idInstructorH;
   String horario;
   int idtipoauto;
   String curso;
+  String fechaR;
+  bool pagado;
+  bool asistio;
 
   Clase(
       {this.idcalendario,
@@ -15,7 +19,10 @@ class Clase {
         this.cliente,
         this.horario,
         this.idtipoauto,
-        this.curso});
+        this.idInstructorH,
+        this.curso,
+        this.pagado,
+        this.asistio});
 
   Clase.fromJson(Map<String, dynamic> json) {
     idcalendario = json['idcalendario'];
@@ -27,6 +34,10 @@ class Clase {
     horario = json['horario'];
     idtipoauto = json['idtipoauto'];
     curso = json['curso'];
+    pagado = json['pagado'];
+    asistio = json['asistio'];
+    idInstructorH = json['idinstructorh'];
+    fechaR = json['fechar'];
   }
 
   Map<String, dynamic> toJson() {

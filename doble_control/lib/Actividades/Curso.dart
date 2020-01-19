@@ -52,6 +52,7 @@ class _Curso extends State<Curso> {
     new Fecha(),
     new Fecha(),
     new Fecha(),
+    new Fecha(),
     new Fecha()
   ];
   List<String> _fechas = [
@@ -64,7 +65,8 @@ class _Curso extends State<Curso> {
     Strings.iFecha,
     Strings.iFecha,
     Strings.iFecha,
-    Strings.iFecha
+    Strings.iFecha,
+    Strings.iFecha,
   ];
   TextEditingController fechaIC = new TextEditingController();
   TextEditingController fechaFC = new TextEditingController();
@@ -74,7 +76,7 @@ class _Curso extends State<Curso> {
   Auto _auto;
   String instructor, horario, curso, auto;
 
-  bool fechaIE, fechaFE, especial;
+  bool fechaIE, fechaFE, pagado = false;
 
   _Curso(this.cliente);
 
@@ -86,7 +88,6 @@ class _Curso extends State<Curso> {
     auto = Strings.auto;
     fechaIE = false;
     fechaFE = false;
-    especial = false;
     getData();
   }
 
@@ -133,6 +134,29 @@ class _Curso extends State<Curso> {
                               padding: EdgeInsets.all(8),
                             ),
                             mostrarDias(context),
+                            Padding(
+                              padding: EdgeInsets.all(8),
+                            ),
+                            getTitulo(context, Strings.pagado),
+                            Transform.scale(
+                              scale: 2.0,
+                              child: new Switch(
+                                value: pagado,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    pagado = value;
+                                  });
+                                },
+                                activeColor: AppColors.green,
+                                activeTrackColor: AppColors.green,
+                                activeThumbImage:
+                                AssetImage('assets/images/check.png'),
+                                inactiveTrackColor: AppColors.red,
+                                inactiveThumbColor: AppColors.red,
+                                inactiveThumbImage:
+                                AssetImage('assets/images/close.png'),
+                              ),
+                            ),
                             Padding(
                               padding: EdgeInsets.all(10),
                               child: new RaisedButton(
@@ -186,10 +210,7 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width - 40,
+          width: MediaQuery.of(context).size.width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -199,7 +220,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 instructor,
                 style: TextStyle(
@@ -249,7 +270,6 @@ class _Curso extends State<Curso> {
       );
     }
 
-
     ShowDialog dialog = ShowDialog(
         title: Text(
           Strings.iInstructor,
@@ -279,10 +299,7 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width - 40,
+          width: MediaQuery.of(context).size.width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -292,7 +309,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 horario,
                 style: TextStyle(
@@ -370,10 +387,7 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width - 40,
+          width: MediaQuery.of(context).size.width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -383,7 +397,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 curso,
                 style: TextStyle(
@@ -461,10 +475,7 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width - 40,
+          width: MediaQuery.of(context).size.width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -474,7 +485,7 @@ class _Curso extends State<Curso> {
                     topRight: Radius.circular(5))),
             child: Padding(
               padding:
-              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 auto,
                 style: TextStyle(
@@ -553,10 +564,7 @@ class _Curso extends State<Curso> {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width - 40,
+          width: MediaQuery.of(context).size.width - 40,
           child: Material(
             elevation: 10,
             color: Colors.white,
@@ -568,7 +576,7 @@ class _Curso extends State<Curso> {
                     topLeft: Radius.circular(5))),
             child: Padding(
               padding:
-              EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                  EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
               child: Text(
                 _fechas[index],
                 style: TextStyle(
@@ -594,8 +602,7 @@ class _Curso extends State<Curso> {
         itemBuilder: (context, index) {
           return new SimpleDialogOption(
             child: Text(
-              "${_dates[index].dia} ${_dates[index].iddia} de ${Strings
-                  .meses[(_dates[index].idmes - 1)]}",
+              "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}",
               style: TextStyle(
                   fontSize: 15,
                   fontFamily: "GoogleSans",
@@ -606,8 +613,7 @@ class _Curso extends State<Curso> {
             onPressed: () {
               setState(() {
                 _fechas[i] =
-                "${_dates[index].dia} ${_dates[index].iddia} de ${Strings
-                    .meses[(_dates[index].idmes - 1)]}";
+                    "${_dates[index].dia} ${_dates[index].iddia} de ${Strings.meses[(_dates[index].idmes - 1)]}";
                 dates[i] = _dates[index];
               });
               Navigator.pop(context);
@@ -656,6 +662,26 @@ class _Curso extends State<Curso> {
   }
 
   Widget mostrarDias(BuildContext context) {
+    if (_curso != null) {
+      if (_curso.idcurso == 2) {
+        dates = [
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha()
+        ];
+        _fechas = [
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+        ];
+      }
+    }
     return ListView.builder(
       itemBuilder: (context, index) {
         String aux = _fechas[index];
@@ -695,7 +721,7 @@ class _Curso extends State<Curso> {
         );
         //Navigator.pop(context);
         InstructorM modelo =
-        new InstructorM.fromJson(jsonDecode(response.body));
+            new InstructorM.fromJson(jsonDecode(response.body));
         setState(() {
           _instructores = modelo.instructores;
         });
@@ -733,10 +759,7 @@ class _Curso extends State<Curso> {
 
   _getFechas() {
     String server =
-        "${Strings.server}clases/${_horario.idhorario}/${_auto
-        .idtipoauto}/${DateTime
-        .now()
-        .month}";
+        "${Strings.server}clases/${_horario.idhorario}/${_auto.idtipoauto}/${DateTime.now().month}";
     Future<String> getData() async {
       try {
         http.Response response = await http.get(
@@ -821,7 +844,8 @@ class _Curso extends State<Curso> {
               "idCliente": cliente.idcliente,
               "idCurso": _curso.idcurso,
               "idTipoAuto": _auto.idtipoauto,
-              "fechas": dates
+              "fechas": dates,
+              "status": pagado
             }));
         Navigator.pop(context);
         Insercion modelo = new Insercion.fromJson(jsonDecode(response.body));

@@ -2,6 +2,7 @@ import 'package:doble_control/Actividades/Alumnos.dart';
 import 'package:doble_control/Actividades/ListarPersonas.dart';
 import 'package:doble_control/Actividades/LogIn.dart';
 import 'package:doble_control/Actividades/Principal.dart';
+import 'package:doble_control/Actividades/Reservaciones.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
@@ -133,6 +134,21 @@ class _DobleControlDrawer extends State<DobleControlDrawer> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ListarPersonas(false)));
+            },
+          ),
+          ListTile(
+            title: Text(Strings.reservaciones,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: "GoogleSans",
+                    color: AppColors.black)),
+            trailing: Icon(
+              Icons.perm_contact_calendar,
+              color: AppColors.black,
+            ),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Reservaciones()));
             },
           ),
           ListTile(
