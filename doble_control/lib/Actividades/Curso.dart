@@ -433,6 +433,7 @@ class _Curso extends State<Curso> {
             ),
             onPressed: () {
               setState(() {
+                actualizarDias();
                 curso = _cursos[index].curso;
                 _curso = _cursos[index];
               });
@@ -662,26 +663,6 @@ class _Curso extends State<Curso> {
   }
 
   Widget mostrarDias(BuildContext context) {
-    if (_curso != null) {
-      if (_curso.idcurso == 2) {
-        dates = [
-          new Fecha(),
-          new Fecha(),
-          new Fecha(),
-          new Fecha(),
-          new Fecha(),
-          new Fecha()
-        ];
-        _fechas = [
-          Strings.iFecha,
-          Strings.iFecha,
-          Strings.iFecha,
-          Strings.iFecha,
-          Strings.iFecha,
-          Strings.iFecha,
-        ];
-      }
-    }
     return ListView.builder(
       itemBuilder: (context, index) {
         String aux = _fechas[index];
@@ -863,5 +844,26 @@ class _Curso extends State<Curso> {
     }
 
     getData();
+  }
+
+  void actualizarDias() {
+    setState(() {
+      dates = [
+        new Fecha(),
+        new Fecha(),
+        new Fecha(),
+        new Fecha(),
+        new Fecha(),
+        new Fecha()
+      ];
+      _fechas = [
+        Strings.iFecha,
+        Strings.iFecha,
+        Strings.iFecha,
+        Strings.iFecha,
+        Strings.iFecha,
+        Strings.iFecha,
+      ];
+    });
   }
 }

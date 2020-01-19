@@ -127,4 +127,8 @@ class Strings {
   static String cursoPagado =  "¡Curso Pagado!";
   static String reservaciones = "Reservaciones";
   static String sinReservaciones = "No tiene reservaciones pendientes";
+  static String alumnoFalta = "¡Alumno Actualizado!";
+  static String fechaR = "Fecha de la reservación: ";
+  static String tarjetas = "Tarjetas";
+  static String ayuda = "Ayuda";
 }

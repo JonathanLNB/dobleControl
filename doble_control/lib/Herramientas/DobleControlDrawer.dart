@@ -1,4 +1,5 @@
 import 'package:doble_control/Actividades/Alumnos.dart';
+import 'package:doble_control/Actividades/Ayuda.dart';
 import 'package:doble_control/Actividades/ListarPersonas.dart';
 import 'package:doble_control/Actividades/LogIn.dart';
 import 'package:doble_control/Actividades/Principal.dart';
@@ -149,6 +150,21 @@ class _DobleControlDrawer extends State<DobleControlDrawer> {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Reservaciones()));
+            },
+          ),
+          ListTile(
+            title: Text(Strings.ayuda,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: "GoogleSans",
+                    color: AppColors.black)),
+            trailing: Icon(
+              Icons.help,
+              color: AppColors.black,
+            ),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Ayuda()));
             },
           ),
           ListTile(

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:doble_control/API/ClaseM.dart';
+import 'package:doble_control/API/ReservacionM.dart';
 import 'package:doble_control/API/ClienteM.dart';
 import 'package:doble_control/API/InstructorM.dart';
 import 'package:doble_control/Actividades/SingIn.dart';
@@ -9,6 +9,7 @@ import 'package:doble_control/Adaptadores/ClaseAdapter.dart';
 import 'package:doble_control/Adaptadores/ClaseAdapter.dart';
 import 'package:doble_control/Adaptadores/ClienteAdapterL.dart';
 import 'package:doble_control/Adaptadores/InstructorAdapter.dart';
+import 'package:doble_control/Adaptadores/ReservacionAdapter.dart';
 import 'package:doble_control/Herramientas/Progress.dart';
 import 'package:doble_control/Herramientas/Strings.dart';
 import 'package:doble_control/Herramientas/appColors.dart';
@@ -16,6 +17,7 @@ import 'package:doble_control/Herramientas/navigation_bar.dart';
 import 'package:doble_control/TDA/Clase.dart';
 import 'package:doble_control/TDA/Cliente.dart';
 import 'package:doble_control/TDA/Instructor.dart';
+import 'package:doble_control/TDA/Reservacion.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +33,8 @@ class Reservaciones extends StatefulWidget {
 }
 
 class _Reservaciones extends State<Reservaciones> {
-  List<Clase> _reservaciones = new List<Clase>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<Reservacion> _reservaciones = new List<Reservacion>();
   TextEditingController filtroC = new TextEditingController();
   String filter = "";
   bool filtroE, instructor;
@@ -45,6 +48,7 @@ class _Reservaciones extends State<Reservaciones> {
         filter = filtroC.text;
       });
     });
+    _reservaciones = [];
     filtroE = false;
     getData();
     super.initState();
@@ -54,8 +58,9 @@ class _Reservaciones extends State<Reservaciones> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(children: <Widget>[
-        _reservaciones.length>0?getLista(context):getEmpty(),
+        _reservaciones!=null?_reservaciones.length>0?getLista(context):getEmpty():getEmpty(),
         NavigationBar(false),
         Padding(
           padding: Platform.isAndroid
@@ -138,16 +143,16 @@ class _Reservaciones extends State<Reservaciones> {
     return new Flexible(
         child: ListView.builder(
       itemBuilder: (context, index) {
-        Clase aux = _reservaciones[index];
+        Reservacion aux = _reservaciones[index];
         return filter == null || filter == ""
             ? Container(
                 margin: EdgeInsets.only(top: 5, bottom: 5),
-                child: ClaseAdapter(aux),
+                child: ReservacionAdapter(aux,_scaffoldKey),
               )
-            : aux.cliente.nombre.toLowerCase().contains(filter.toLowerCase())
+            : aux.clase.cliente.nombre.toLowerCase().contains(filter.toLowerCase())
                 ? Container(
                     margin: EdgeInsets.only(top: 5, bottom: 5),
-                    child: ClaseAdapter(aux),
+                    child: ReservacionAdapter(aux,_scaffoldKey),
                   )
                 : Container();
       },
@@ -234,7 +239,7 @@ class _Reservaciones extends State<Reservaciones> {
   }
 
   _getReservaciones() {
-    String server = "${Strings.server}/reservaciones";
+    String server = "${Strings.server}clases/reservaciones";
     Future<String> getData() async {
       try {
         http.Response response = await http.get(
@@ -244,10 +249,14 @@ class _Reservaciones extends State<Reservaciones> {
           },
         );
         //Navigator.pop(context);
-        ClaseM modelo = ClaseM.fromJson(jsonDecode(response.body));
-        setState(() {
-          _reservaciones = modelo.clases;
-        });
+        ReservacionM modelo = ReservacionM.fromJson(jsonDecode(response.body));
+        if(modelo.valid == 1) {
+          setState(() {
+            _reservaciones = modelo.reservaciones;
+          });
+        }
+        else
+          Fluttertoast.showToast(msg: Strings.errorS);
       } catch (e) {
         Fluttertoast.showToast(msg: Strings.errorS);
       }

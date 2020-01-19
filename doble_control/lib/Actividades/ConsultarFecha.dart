@@ -20,6 +20,8 @@ import 'package:giffy_dialog/giffy_dialog.dart';
 class ConsultarDia extends StatefulWidget {
   String fecha;
   List<Clase> clases;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
 
   ConsultarDia(this.fecha, this.clases);
 
@@ -31,6 +33,7 @@ class ConsultarDia extends StatefulWidget {
 }
 
 class _ConsultarDia extends State<ConsultarDia> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<Clase> clases = [];
   String fecha;
 
@@ -39,6 +42,7 @@ class _ConsultarDia extends State<ConsultarDia> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           Container(
@@ -115,7 +119,7 @@ class _ConsultarDia extends State<ConsultarDia> {
         Clase aux = clases[index];
         return Container(
           margin: EdgeInsets.only(top: 10, bottom: 10),
-          child: ClaseAdapter(aux),
+          child: ClaseAdapter(aux, _scaffoldKey),
         );
       },
       scrollDirection: Axis.vertical,

@@ -341,7 +341,7 @@ class _Principal extends State<Principal> {
               Clase aux = clases[index - 1];
               return Container(
                 margin: EdgeInsets.only(top: 10, bottom: 10),
-                child: ClaseAdapter(aux),
+                child: ClaseAdapter(aux, _scaffoldKey),
               );
             }
           },

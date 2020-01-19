@@ -15,11 +15,15 @@ import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 
+import '../Herramientas/ShowDialog.dart';
+
 class ClaseAdapter extends StatelessWidget {
-  ClaseAdapter(this.clase) {
+
+  ClaseAdapter(this.clase, this._scaffoldKey) {
     _getFechas();
   }
 
+  GlobalKey<ScaffoldState> _scaffoldKey;
   Clase clase;
   Fecha fecha;
   List<Fecha> _dates = new List<Fecha>();
@@ -43,7 +47,7 @@ class ClaseAdapter extends StatelessWidget {
           icon: Icons.book,
           onTap: () {
             showDialog(
-                context: context,
+        context: _scaffoldKey.currentContext,
                 builder: (_) => Center(
                         child: Container(
                       height: 165,
@@ -56,8 +60,9 @@ class ClaseAdapter extends StatelessWidget {
           caption: 'Reagendar',
           color: AppColors.yellowDark,
           icon: Icons.edit,
+          foregroundColor: AppColors.colorAccent,
           onTap: () {
-            _selectDate();
+            _selectDate(_scaffoldKey.currentContext);
           },
         ),
         IconSlideAction(
@@ -170,10 +175,10 @@ class ClaseAdapter extends StatelessWidget {
                           image: DecorationImage(
                               fit: BoxFit.cover,
                               image: clase.idtipoauto == 1
-                                  ? AssetImage("assets/images/automatico.png")
+                                  ? AssetImage("assets/images/ambos.png")
                                   : clase.idtipoauto == 2
-                                      ? AssetImage("assets/images/estandar.png")
-                                      : AssetImage("assets/images/ambos.png")),
+                                      ? AssetImage("assets/images/automatico.png")
+                                      : AssetImage("assets/images/estandar.png")),
                         ),
                       ),
                       Container(
@@ -211,7 +216,7 @@ class ClaseAdapter extends StatelessWidget {
 
   void falta(BuildContext context) async {
     showDialog(
-        context: context,
+        context: _scaffoldKey.currentContext,
         builder: (_) => AssetGiffyDialog(
               image: Image.asset('assets/images/sea.gif', fit: BoxFit.cover),
               title: Text(
@@ -241,14 +246,14 @@ class ClaseAdapter extends StatelessWidget {
                     fontFamily: "GoogleSans", color: AppColors.colorAccent),
               ),
               onOkButtonPressed: () {
-                ponerFalta(context);
+                ponerFalta(_scaffoldKey.currentContext);
               },
             ));
   }
 
   void reagendar(BuildContext context, String fecha) async {
     showDialog(
-        context: context,
+        context: _scaffoldKey.currentContext,
         builder: (_) => AssetGiffyDialog(
               image: Image.asset('assets/images/sea.gif', fit: BoxFit.cover),
               title: Text(
@@ -277,15 +282,16 @@ class ClaseAdapter extends StatelessWidget {
                 style: TextStyle(
                     fontFamily: "GoogleSans", color: AppColors.colorAccent),
               ),
-              onOkButtonPressed: () {
-                reagendarServ(context, fecha);
+              onOkButtonPressed: () async {
+                Navigator.pop(_scaffoldKey.currentContext);
+                await reagendarServ(_scaffoldKey.currentContext, fecha);
               },
             ));
   }
 
   ponerFalta(BuildContext context) {
     String server =
-        "${Strings.server}falta/${clase.cliente.idcliente}/${clase.idcalendario}";
+        "${Strings.server}clases/falta/${clase.cliente.idcliente}/${clase.idcalendario}";
     Future<String> getData() async {
       try {
         http.Response response = await http.put(
@@ -296,7 +302,7 @@ class ClaseAdapter extends StatelessWidget {
         );
         Insercion modelo = new Insercion.fromJson(jsonDecode(response.body));
         if (modelo.valid == 1) {
-          Fluttertoast.showToast(msg: Strings.cursoAgendado);
+          Fluttertoast.showToast(msg: Strings.alumnoFalta);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => Principal()),
@@ -364,12 +370,12 @@ class ClaseAdapter extends StatelessWidget {
         ),
       ),
       onTap: () {
-        _selectDate();
+        _selectDate(_scaffoldKey.currentContext);
       },
     );
   }
 
-  Future _selectDate() async {
+  Future _selectDate(BuildContext context) async {
     ListView getLista(BuildContext context) {
       return ListView.builder(
         shrinkWrap: true,
@@ -398,11 +404,33 @@ class ClaseAdapter extends StatelessWidget {
         addAutomaticKeepAlives: true,
       );
     }
+
+    ShowDialog dialog = ShowDialog(
+        title: Text(
+          Strings.iFecha,
+          style: TextStyle(
+              fontSize: 18,
+              fontFamily: "GoogleSans",
+              fontWeight: FontWeight.bold,
+              color: AppColors.black),
+          textAlign: TextAlign.center,
+        ),
+        content: Container(
+          height: 300,
+          child: getLista(context),
+        ));
+
+    showDialog(
+        context: _scaffoldKey.currentContext,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
   }
 
-  void reagendarServ(BuildContext context, String fecha) {
+  reagendarServ(BuildContext context, String fecha) async {
     String server =
-        "${Strings.server}reagendar/${clase.cliente.idcliente}/${clase.idcalendario}/${this.fecha.iddia}/${this.fecha.idmes}";
+        "${Strings.server}clases/reagendar/${clase.cliente.idcliente}/${clase.idcalendario}/${this.fecha.iddia}/${this.fecha.idmes}";
     Future<String> getData() async {
       try {
         http.Response response = await http.put(
@@ -424,11 +452,12 @@ class ClaseAdapter extends StatelessWidget {
         Fluttertoast.showToast(msg: Strings.errorS);
       }
     }
+   await getData();
   }
 
-  void pagar(BuildContext context) {
+  pagar(BuildContext context) async {
     String server =
-        "${Strings.server}/reservacion/${clase.cliente.idcliente}/${clase.idInstructorH}";
+        "${Strings.server}clases/reservacion/${clase.cliente.idcliente}/${clase.idInstructorH}";
     Future<String> getData() async {
       try {
         http.Response response = await http.put(
@@ -450,11 +479,12 @@ class ClaseAdapter extends StatelessWidget {
         Fluttertoast.showToast(msg: Strings.errorS);
       }
     }
+    await getData();
   }
 
-  void eliminar(BuildContext context) {
+  eliminar(BuildContext context) async {
     String server =
-        "${Strings.server}/reservacion/${clase.cliente.idcliente}/${clase.idInstructorH}";
+        "${Strings.server}clases/reservacion/${clase.cliente.idcliente}/${clase.idInstructorH}";
     Future<String> getData() async {
       try {
         http.Response response = await http.delete(
@@ -476,5 +506,6 @@ class ClaseAdapter extends StatelessWidget {
         Fluttertoast.showToast(msg: Strings.errorS);
       }
     }
+    await getData();
   }
 }
