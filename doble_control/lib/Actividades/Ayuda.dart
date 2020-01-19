@@ -119,7 +119,7 @@ class Ayuda extends StatelessWidget {
                           color: Colors.transparent,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: AssetImage("assets/images/ambos.png")),
+                              image: AssetImage("assets/images/estandar.png")),
                         ),
                       ),
                       SizedBox(
@@ -177,7 +177,7 @@ class Ayuda extends StatelessWidget {
                           color: Colors.transparent,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: AssetImage("assets/images/estandar.png")),
+                              image: AssetImage("assets/images/ambos.png")),
                         ),
                       ),
                       SizedBox(
@@ -188,7 +188,7 @@ class Ayuda extends StatelessWidget {
                         child: Text(
                           "Ambos Autos",
                           style: TextStyle(
-                              color: AppColors.blue,
+                              color: AppColors.blueRey,
                               fontSize: 16.0,
                               fontFamily: "GoogleSans",
                               fontWeight: FontWeight.bold),

@@ -150,11 +150,11 @@ class _Curso extends State<Curso> {
                                 activeColor: AppColors.green,
                                 activeTrackColor: AppColors.green,
                                 activeThumbImage:
-                                AssetImage('assets/images/check.png'),
+                                    AssetImage('assets/images/check.png'),
                                 inactiveTrackColor: AppColors.red,
                                 inactiveThumbColor: AppColors.red,
                                 inactiveThumbImage:
-                                AssetImage('assets/images/close.png'),
+                                    AssetImage('assets/images/close.png'),
                               ),
                             ),
                             Padding(
@@ -433,9 +433,9 @@ class _Curso extends State<Curso> {
             ),
             onPressed: () {
               setState(() {
-                actualizarDias();
                 curso = _cursos[index].curso;
                 _curso = _cursos[index];
+                actualizarDias();
               });
               Navigator.pop(context);
             },
@@ -848,22 +848,51 @@ class _Curso extends State<Curso> {
 
   void actualizarDias() {
     setState(() {
-      dates = [
-        new Fecha(),
-        new Fecha(),
-        new Fecha(),
-        new Fecha(),
-        new Fecha(),
-        new Fecha()
-      ];
-      _fechas = [
-        Strings.iFecha,
-        Strings.iFecha,
-        Strings.iFecha,
-        Strings.iFecha,
-        Strings.iFecha,
-        Strings.iFecha,
-      ];
+      if (_curso.idcurso == 2) {
+        dates = [
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha()
+        ];
+        _fechas = [
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+        ];
+      } else {
+        dates = [
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha(),
+          new Fecha()
+        ];
+        _fechas = [
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+          Strings.iFecha,
+        ];
+      }
     });
   }
 }

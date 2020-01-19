@@ -175,10 +175,10 @@ class ClaseAdapter extends StatelessWidget {
                           image: DecorationImage(
                               fit: BoxFit.cover,
                               image: clase.idtipoauto == 1
-                                  ? AssetImage("assets/images/ambos.png")
+                                  ? AssetImage("assets/images/estandar.png")
                                   : clase.idtipoauto == 2
                                       ? AssetImage("assets/images/automatico.png")
-                                      : AssetImage("assets/images/estandar.png")),
+                                      : AssetImage("assets/images/ambos.png")),
                         ),
                       ),
                       Container(

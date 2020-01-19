@@ -94,7 +94,7 @@ class _Alumnos extends State<Alumnos> {
                     elevation: 5.0,
                     color: Colors.white,
                     child: Container(
-                        width: 300,
+                        width: 500,
                         margin: EdgeInsets.all(10),
                         child: Column(
                           children: <Widget>[
@@ -232,7 +232,7 @@ class _Alumnos extends State<Alumnos> {
           padding: EdgeInsets.all(10),
         ),
         Container(
-          height: 370,
+          height: 500,
           child: ListView.builder(
             itemBuilder: (context, index) {
               Cliente aux = _clientes[index];

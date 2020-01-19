@@ -255,8 +255,8 @@ class CalendarPainter extends CustomPainter {
         List<CellEvent> _list =
             (data[i]['value'].events as List<Clase>).map((Clase e) {
           Color background = e.idtipoauto == 1
-              ? AppColors.pink
-              : (e.idtipoauto == 2 ? AppColors.blue : AppColors.green);
+              ? AppColors.green
+              : (e.idtipoauto == 2 ? AppColors.pink : AppColors.blueRey);
 
           return CellEvent(
               background: background.withOpacity(

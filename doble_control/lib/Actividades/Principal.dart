@@ -74,14 +74,6 @@ class _Principal extends State<Principal> {
         onWillPop: onBackPress,
         child: Stack(
           children: <Widget>[
-            Container(
-              decoration: new BoxDecoration(
-                image: new DecorationImage(
-                    image: new AssetImage("assets/images/fondo.png"),
-                    fit: BoxFit.none,
-                    repeat: ImageRepeat.repeat),
-              ),
-            ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -286,7 +278,7 @@ class _Principal extends State<Principal> {
 
   Container getEmpty(int pos) {
     return Container(
-        width: 400,
+        width: 500,
         margin: new EdgeInsets.symmetric(vertical: 16.0),
         alignment: FractionalOffset.center,
         child: Column(
@@ -296,7 +288,7 @@ class _Principal extends State<Principal> {
               child: getDia(context, pos),
             ),
             Container(
-              margin: EdgeInsets.only(top: 110, bottom: 20),
+              margin: EdgeInsets.only(top: 90, bottom: 20),
               width: 150,
               height: 150,
               decoration: BoxDecoration(
@@ -330,7 +322,7 @@ class _Principal extends State<Principal> {
 
   Widget getLista(BuildContext context, List<Clase> clases, int pos) {
     return Container(
-        width: 400,
+        width: 500,
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           padding: EdgeInsets.only(top: 110),
